@@ -1,0 +1,31 @@
+# Game loop
+
+1. Input from player
+
+2. Calculate new local state
+
+3. If 'host', calculate food position
+
+4. Send new state to remote.
+
+5. Request new state from remote.
+
+6. If the response has not been received, employ latency strategy 
+    
+    - Pause and resume strategy
+
+        I. Pause
+
+        II. Revert to last synchronized tick state
+
+        III. Start timer
+        
+        IV. Resume
+
+7. Calculate remote + local state
+
+8. Render
+
+9. While (current_time_s - previous_tick_time) >= tick_time_s
+    sleep(tick_time_s / 20)
+
