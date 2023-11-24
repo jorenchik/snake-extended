@@ -1,0 +1,12 @@
+LICENCE.txt
+README.md
+pyproject.toml
+snakext/__init__.py
+snakext/calc.py
+snakext.egg-info/PKG-INFO
+snakext.egg-info/SOURCES.txt
+snakext.egg-info/dependency_links.txt
+snakext.egg-info/top_level.txt
+snakext/sandbox/__init__.py
+snakext/sandbox/ws2.py
+snakext/test_module/__init__.py
