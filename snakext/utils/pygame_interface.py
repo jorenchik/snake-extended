@@ -32,7 +32,7 @@ class PygameInterface:
         color = background_color
         self.background_color = color
 
-    def block(self) -> pygame.Rect:
+    def rect(self) -> pygame.Rect:
         rect = pygame.Rect(0, 0, 100, 100)
         self.blocks.append(rect)
         return rect
