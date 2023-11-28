@@ -6,6 +6,7 @@ import asyncio
 GAME_INITIALIZED_SUCCESSFULLY: int = 5
 DEFAULT_RESOLUTION: tuple[int, int] = (1280, 720)
 DEFAULT_BACKGROUND_COLOR: tuple[int, int, int, int] = (255, 255, 255, 255)
+DEFAULT_GENERIC_COLOR: tuple[int, int, int, int] = (100, 100, 100, 255)
 
 
 class PygameInterface:
@@ -38,6 +39,14 @@ class PygameInterface:
 
     def background(self) -> None:
         self.screen.fill(self.background_color)
+
+    def draw_rect(
+        self,
+        surface: pygame.Surface,
+        rect: pygame.Rect,
+        color: pygame.Color,
+    ) -> None:
+        pygame.draw.rect(surface, color, rect)
 
     def end_of_iteration_update(self) -> None:
         self.background()
