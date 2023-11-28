@@ -57,6 +57,12 @@ class PygameInterface:
             pygame.draw.rect(self.screen, pygame.Color(0, 0, 0), block)
         self._flip()
 
+    def bottom_pos(self, bottom: int) -> int:
+        return self.screen.get_height() - bottom
+
+    def right_pos(self, right: int) -> int:
+        return self.screen.get_width() - right
+
     def _flip(self) -> None:
         pygame.display.flip()
 
