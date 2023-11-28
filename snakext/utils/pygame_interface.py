@@ -42,11 +42,14 @@ class PygameInterface:
 
     def draw_rect(
         self,
-        surface: pygame.Surface,
         rect: pygame.Rect,
+        surface: pygame.Surface | None = None,
         color: pygame.Color = DEFAULT_GENERIC_COLOR,
     ) -> None:
-        pygame.draw.rect(surface, color, rect)
+        if surface is None:
+            pygame.draw.rect(self.screen, color, rect)
+        else:
+            pygame.draw.rect(surface, color, rect)
 
     def end_of_iteration_update(self) -> None:
         self.background()
