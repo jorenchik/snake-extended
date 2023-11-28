@@ -31,28 +31,31 @@ class PygameInterface:
         color = pygame.Color(red, green, blue, alpha)
         self.background_color = color
 
-    def make_block(self) -> pygame.Rect:
+    def block(self) -> pygame.Rect:
         rect = pygame.Rect(0, 0, 100, 100)
         self.blocks.append(rect)
         return rect
 
-    def draw_background(self) -> None:
+    def background(self) -> None:
         self.screen.fill(self.background_color)
 
-    def flip(self) -> None:
-        pygame.display.flip()
-
     def end_of_iteration_update(self) -> None:
-        self.draw_background()
+        self.background()
         for block in self.blocks:
             pygame.draw.rect(self.screen, pygame.Color(0, 0, 0), block)
-        self.flip()
+        self._flip()
+
+    def _flip(self) -> None:
+        pygame.display.flip()
+
+
+pygame_interface = PygameInterface()
 
 
 # TODO: Make this run only in debug mode (dotenv)
 async def test_run_game_in_loop() -> None:
     pg_interface = PygameInterface()
-    pg_interface.make_block()
+    pg_interface.block()
     while True:
         pg_interface.clock.tick(30)
         pg_interface.end_of_iteration_update()
