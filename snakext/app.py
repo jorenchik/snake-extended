@@ -4,7 +4,6 @@ from snakext.views import game_view
 
 
 async def main_loop() -> None:
-
     game_view.init_game()
     while True:
         game_view.draw_view()
