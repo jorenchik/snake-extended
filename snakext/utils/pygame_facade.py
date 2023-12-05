@@ -6,9 +6,16 @@ DEFAULT_RESOLUTION: tuple[int, int] = (1280, 720)
 DEFAULT_BACKGROUND_COLOR = (255, 255, 255, 255)
 DEFAULT_GENERIC_COLOR = (100, 100, 100, 255)
 
-pygame.init()
-_screen: pygame.Surface = pygame.display.set_mode(DEFAULT_RESOLUTION)
-_clock: pygame.time.Clock = pygame.time.Clock()
+_screen: pygame.Surface | None = None
+_clock: pygame.time.Clock | None = None
+
+
+def init_game() -> None:
+    global _screen, _clock
+    pygame.init()
+    _screen = pygame.display.set_mode(DEFAULT_RESOLUTION)
+    _clock = pygame.time.Clock()
+
 
 Rect = pygame.Rect
 Color = pygame.Color
