@@ -8,6 +8,9 @@ from typing import Any
 def make_rect_grid(position_top_left: tuple[float, float],
                    frame_dimensions: tuple[float, float],
                    cols: int) -> npt.NDArray[Any]:
+    (position_top_left,
+     frame_dimensions) = _add_margin_to_frame(position_top_left,
+                                              frame_dimensions)
     (slot_width, slot_height, rows) = _grid_dimensions(frame_dimensions, cols)
     source_list = _rect_grid_list(rows, cols, (slot_width, slot_height),
                                   position_top_left)
@@ -29,6 +32,18 @@ def make_walls(playground_position: tuple[float, float],
                           wall_width),
     ]
     return walls
+
+
+def _add_margin_to_frame(
+    position_top_left: tuple[float, float], frame_dimensions: tuple[float,
+                                                                    float]
+) -> tuple[tuple[float, float], tuple[float, float]]:
+    frame_margin = 5
+    position_top_left = vec_2d_add(position_top_left,
+                                   (frame_margin, frame_margin))
+    frame_dimensions = vec_2d_add(frame_dimensions,
+                                  (-frame_margin * 2, -frame_margin * 2))
+    return (position_top_left, frame_dimensions)
 
 
 def make_playground(
