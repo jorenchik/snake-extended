@@ -6,7 +6,7 @@ from snakext.utils import pygame_facade
 
 async def main_loop() -> None:
     pygame_facade.init_game()
-    game_view.init_game()
+    game_view.init_game_view()
     while True:
         game_view.draw_view(game_view._playground_instance)
         await asyncio.sleep(0.5)

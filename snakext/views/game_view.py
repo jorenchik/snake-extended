@@ -32,7 +32,7 @@ class Playground:
 _playground_instance: Playground | None = None
 
 
-def init_game() -> None:
+def init_game_view() -> None:
     global _playground_instance
     position = (PLAYGROUND_MARGIN, PLAYGROUND_MARGIN)
     dimensions = (pygame_facade.screen_width() - 2 * position[0],
