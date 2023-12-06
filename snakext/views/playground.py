@@ -3,6 +3,62 @@ import numpy.typing as npt
 from snakext.utils import pygame_facade
 import math
 from typing import Any
+from dataclasses import dataclass
+
+SNAKE_COLUMN_COUNT = 30
+PLAYGROUND_MARGIN = 40
+WALL_MARGIN = 0
+WALL_WIDTH = 25
+PLAYGROUND_BACKGROUND_COLOR = (129, 143, 180, 255)
+WALL_COLOR = (120, 120, 120, 255)
+SNAKE_COLOR = (50, 50, 50, 255)
+
+
+@dataclass
+class Playground:
+    position: tuple[float, float]
+    dimensions: tuple[float, float]
+    wall_width: int
+    walls: list[pygame_facade.Rect]
+    internal_playground_dimensions: tuple[float, float]
+    internal_playground_position: tuple[float, float]
+    grid: npt.NDArray[Any]
+    wall_color: pygame_facade.Color
+    background_color: pygame_facade.Color
+    snake_color: pygame_facade.Color
+
+
+def init_playground() -> Playground:
+    playground_position = (PLAYGROUND_MARGIN, PLAYGROUND_MARGIN)
+    playground_dimensions = (pygame_facade.screen_width() -
+                             2 * playground_position[0],
+                             pygame_facade.screen_height() -
+                             2 * playground_position[1])
+    internal_grid_dimensions = (playground_dimensions[0] - 2 * WALL_WIDTH,
+                                playground_dimensions[1] - 2 * WALL_WIDTH)
+    internal_grid_position = (playground_position[0] + WALL_WIDTH,
+                              playground_position[1] + WALL_WIDTH)
+    try:
+        playground_instance = Playground(
+            (PLAYGROUND_MARGIN, PLAYGROUND_MARGIN),
+            (pygame_facade.screen_width() - 2 * playground_position[0],
+             pygame_facade.screen_height() - 2 * playground_position[1]),
+            WALL_WIDTH,
+            make_walls(playground_position, playground_dimensions, WALL_WIDTH),
+            (playground_dimensions[0] - 2 * WALL_WIDTH,
+             playground_dimensions[1] - 2 * WALL_WIDTH),
+            (playground_position[0] + WALL_WIDTH,
+             playground_position[1] + WALL_WIDTH),
+            make_rect_grid(internal_grid_position, internal_grid_dimensions,
+                           SNAKE_COLUMN_COUNT),
+            pygame_facade.create_color(WALL_COLOR),
+            pygame_facade.create_color(PLAYGROUND_BACKGROUND_COLOR),
+            pygame_facade.create_color(SNAKE_COLOR))
+    except pygame_facade.error as e:
+        raise e
+    except TypeError as e:
+        raise TypeError(f"Error while initializing Playground: {e}")
+    return playground_instance
 
 
 def make_rect_grid(position_top_left: tuple[float, float],
