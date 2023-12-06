@@ -46,7 +46,7 @@ def _add_margin_to_frame(
     return (position_top_left, frame_dimensions)
 
 
-def make_playground(
+def make_playground_rect(
         playground_position_top_left: tuple[float,
                                             float]) -> pygame_facade.Rect:
     playground_width = pygame_facade.screen_width(
