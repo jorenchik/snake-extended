@@ -19,6 +19,7 @@ def init_game() -> None:
 
 Rect = pygame.Rect
 Color = pygame.Color
+error = pygame.error
 
 
 def rect(pos_vector_top_left: tuple[float, float],

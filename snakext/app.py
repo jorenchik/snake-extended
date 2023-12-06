@@ -6,9 +6,15 @@ from snakext.utils import pygame_facade
 
 async def main_loop() -> None:
     pygame_facade.init_game()
-    game_view.init_game_view()
+    try:
+        game_view.init_game_view()
+        playground_instance = game_view.playground_instance
+    except pygame_facade.error:
+        raise pygame_facade.error
+    except TypeError as e:
+        raise e
     while True:
-        game_view.draw_view(game_view._playground_instance)
+        game_view.draw_view(playground_instance)
         await asyncio.sleep(0.5)
 
 

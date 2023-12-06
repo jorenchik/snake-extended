@@ -29,11 +29,15 @@ class Playground:
     snake_color: pygame_facade.Color
 
 
-_playground_instance: Playground | None = None
+playground_instance: Playground | None = None
 
 
 def init_game_view() -> None:
-    global _playground_instance
+    global playground_instance
+    playground_instance = init_playground()
+
+
+def init_playground() -> Playground:
     position = (PLAYGROUND_MARGIN, PLAYGROUND_MARGIN)
     dimensions = (pygame_facade.screen_width() - 2 * position[0],
                   pygame_facade.screen_height() - 2 * position[1])
@@ -42,19 +46,25 @@ def init_game_view() -> None:
     internal_playground_position = (position[0] + WALL_WIDTH,
                                     position[1] + WALL_WIDTH)
     wall_width = WALL_WIDTH
-    _playground_instance = Playground(
-        (PLAYGROUND_MARGIN, PLAYGROUND_MARGIN),
-        (pygame_facade.screen_width() - 2 * position[0],
-         pygame_facade.screen_height() - 2 * position[1]), WALL_WIDTH,
-        playground.make_walls(position, dimensions, wall_width),
-        (dimensions[0] - 2 * WALL_WIDTH, dimensions[1] - 2 * WALL_WIDTH),
-        (position[0] + WALL_WIDTH, position[1] + WALL_WIDTH),
-        playground.make_rect_grid(internal_playground_position,
-                                  internal_playground_dimensions,
-                                  SNAKE_COLUMN_COUNT),
-        pygame_facade.create_color(WALL_COLOR),
-        pygame_facade.create_color(PLAYGROUND_BACKGROUND_COLOR),
-        pygame_facade.create_color(SNAKE_COLOR))
+    try:
+        _playground_instance = Playground(
+            (PLAYGROUND_MARGIN, PLAYGROUND_MARGIN),
+            (pygame_facade.screen_width() - 2 * position[0],
+             pygame_facade.screen_height() - 2 * position[1]), WALL_WIDTH,
+            playground.make_walls(position, dimensions, wall_width),
+            (dimensions[0] - 2 * WALL_WIDTH, dimensions[1] - 2 * WALL_WIDTH),
+            (position[0] + WALL_WIDTH, position[1] + WALL_WIDTH),
+            playground.make_rect_grid(internal_playground_position,
+                                      internal_playground_dimensions,
+                                      SNAKE_COLUMN_COUNT),
+            pygame_facade.create_color(WALL_COLOR),
+            pygame_facade.create_color(PLAYGROUND_BACKGROUND_COLOR),
+            pygame_facade.create_color(SNAKE_COLOR))
+    except pygame_facade.error as e:
+        raise e
+    except TypeError as e:
+        raise TypeError(f"Error while initializing Playground: {e}")
+    return _playground_instance
 
 
 def draw_view(playground: Playground) -> None:
