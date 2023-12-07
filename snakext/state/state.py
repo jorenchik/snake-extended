@@ -14,10 +14,16 @@ SNAKE_PLACES: list[str] = [
     SNAKE_TAIL_PLACE, SNAKE_BODY_PLACE, SNAKE_HEAD_PLACE
 ]
 
+TOP_DIRECTION = 1
+BOTTOM_DIRECTION = 2
+RIGHT_DIRECTION = 3
+LEFT_DIRECTION = 4
+
 
 @dataclass
 class State:
     snake_placement: npt.NDArray[np.str_]
+    snake_direction: int
 
 
 state_instance: State
@@ -31,4 +37,5 @@ def init_state() -> None:
     snake_placement = np.empty(grid_shape, dtype=np.str_)
     grid_contents = ['v' for x in range(element_count)]
     math_.fill_arr_2d(snake_placement, grid_contents, *grid_shape)
-    state_instance = State(snake_placement)
+    # Choose some direction for the snake
+    state_instance = State(snake_placement, RIGHT_DIRECTION)
