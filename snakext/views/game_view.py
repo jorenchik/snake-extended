@@ -2,9 +2,8 @@
 import numpy as np
 from snakext.views import playground
 from snakext.facades import pygame_facade
+from snakext.state import state
 import types
-
-SNAKE_COLOR = pygame_facade.Color(50, 50, 50, 255)
 
 playground_instance: playground.Playground
 
@@ -46,9 +45,10 @@ def _place_snake(
         pygame_facade: types.ModuleType, playground: playground.Playground,
         snake_placement: np.ndarray[tuple[int, int], np.dtype[np.str_]],
         grid: np.ndarray[tuple[int, int], np.dtype[np.object_]]) -> None:
+
     for i, row in enumerate(snake_placement):
         for k, place in enumerate(row):
             if not isinstance(grid[i, k], pygame_facade.Rect):
                 raise TypeError("Grid should consist of only Rect objects")
-            if place != 'v':
-                pygame_facade.draw_rect(grid[i, k], SNAKE_COLOR)
+            if place in state.SNAKE_PLACES:
+                pygame_facade.draw_rect(grid[i, k], playground.snake_color)

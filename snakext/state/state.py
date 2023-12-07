@@ -6,6 +6,14 @@ from dataclasses import dataclass
 from snakext.views import game_view
 from snakext.utils import math_
 
+VOID_PLACE = 'v'
+SNAKE_BODY_PLACE = 'b'
+SNAKE_TAIL_PLACE = 't'
+SNAKE_HEAD_PLACE = 'h'
+SNAKE_PLACES: list[str] = [
+    SNAKE_TAIL_PLACE, SNAKE_BODY_PLACE, SNAKE_HEAD_PLACE
+]
+
 
 @dataclass
 class State:

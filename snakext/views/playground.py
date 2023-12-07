@@ -13,9 +13,10 @@ FRAME_MARGIN_Y = 5
 
 playground_position = (PLAYGROUND_MARGIN, PLAYGROUND_MARGIN)
 grid_column_count = 30
-plauground_background_color = (129, 143, 180, 255)
-wall_color = (120, 120, 120, 255)
-snake_color = (50, 50, 50, 255)
+snake_color = pygame_facade.Color(50, 50, 50, 255)
+plauground_background_color = pygame_facade.Color(129, 143, 180, 255)
+wall_color = pygame_facade.Color(120, 120, 120, 255)
+snake_color = pygame_facade.Color(50, 50, 50, 255)
 
 
 @dataclass
