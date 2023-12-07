@@ -3,7 +3,6 @@
 import numpy as np
 import numpy.typing as npt
 from dataclasses import dataclass
-from snakext.views import game_view
 from snakext.utils import math_
 
 VOID_PLACE = 'v'
@@ -29,10 +28,9 @@ class State:
 state_instance: State
 
 
-def init_state() -> None:
+def init_state(grid_rows: int, grid_cols) -> None:
     global state_instance
-    grid_shape = (game_view.playground_instance.grid_rows,
-                  game_view.playground_instance.grid_cols)
+    grid_shape = (grid_rows, grid_cols)
     element_count = grid_shape[0] * grid_shape[1]
     snake_placement = np.empty(grid_shape, dtype=np.str_)
     grid_contents = ['v' for x in range(element_count)]

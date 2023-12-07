@@ -14,7 +14,8 @@ async def main_loop() -> None:
         raise pygame_facade.error
     except TypeError as e:
         raise e
-    state.init_state()
+    state.init_state(playground_instance.grid_rows,
+                     playground_instance.grid_cols)
     state_instance = state.state_instance
     while True:
         game_view.draw_game_view(playground_instance,
