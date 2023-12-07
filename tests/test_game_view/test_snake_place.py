@@ -27,9 +27,9 @@ class TestPlaceSnake(unittest.TestCase):
         self.pygame_facade.Rect = pygame.Rect
         self.snake_color = pygame_facade.Color(*playground.snake_color)
         self.playground_instance.snake_color = self.snake_color
-        self.snake_placement = numpy.empty((4, 4), dtype=numpy.str_)
+        self.snake_placement = numpy.empty((4, 4), dtype=numpy.object_)
         for i in range(0, 4):
-            self.snake_placement[i] = numpy.array(['v' for x in range(0, 4)])
+            self.snake_placement[i] = numpy.array(["v" for x in range(0, 4)])
         self.grid: npt.NDArray[Mock] = numpy.empty((4, 4), dtype=Mock)
         for i in range(0, 4):
             for j in range(0, 4):
@@ -37,8 +37,8 @@ class TestPlaceSnake(unittest.TestCase):
 
     def test_draws_tail_at_the_edge(self) -> None:
         self.snake_placement[1] = numpy.array([
-            'v', state.SNAKE_TAIL_PLACE, state.SNAKE_BODY_PLACE,
-            state.SNAKE_HEAD_PLACE
+            'v', state.SNAKE_TAIL_PLACE + "3", state.SNAKE_BODY_PLACE + "2",
+            state.SNAKE_HEAD_PLACE + "1"
         ])
         game_view._place_snake(self.pygame_facade, self.playground_instance,
                                self.snake_placement, self.grid)
@@ -51,7 +51,7 @@ class TestPlaceSnake(unittest.TestCase):
 
     def test_draws_at_corner(self) -> None:
         self.snake_placement[0] = numpy.array(
-            ['v', 'v', 'v', state.SNAKE_HEAD_PLACE])
+            ['v', 'v', 'v', state.SNAKE_BODY_PLACE + "1"])
         self.snake_placement[1] = numpy.array(['v', 'v', 'v', 'v'])
         game_view._place_snake(self.pygame_facade, self.playground_instance,
                                self.snake_placement, self.grid)
@@ -61,7 +61,7 @@ class TestPlaceSnake(unittest.TestCase):
 
     def test_draws_exact_amount(self) -> None:
         self.snake_placement[0] = numpy.array(
-            ['v', 'v', 'v', state.SNAKE_HEAD_PLACE])
+            ['v', 'v', 'v', state.SNAKE_HEAD_PLACE + "1"])
         self.snake_placement[1] = numpy.array(
             [state.SNAKE_BODY_PLACE, 'v', 'v', state.SNAKE_HEAD_PLACE])
         game_view._place_snake(self.pygame_facade, self.playground_instance,
@@ -84,8 +84,8 @@ class TestPlaceSnake(unittest.TestCase):
 
     def test_places_only_snake_related_strings_in_placement(self) -> None:
         self.snake_placement[1] = [
-            'm', state.SNAKE_BODY_PLACE, state.SNAKE_BODY_PLACE,
-            state.SNAKE_TAIL_PLACE
+            'm', state.SNAKE_TAIL_PLACE + "3", state.SNAKE_BODY_PLACE + "2",
+            state.SNAKE_TAIL_PLACE + "1"
         ]
         game_view._place_snake(self.pygame_facade, self.playground_instance,
                                self.snake_placement, self.grid)

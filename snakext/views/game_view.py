@@ -50,5 +50,5 @@ def _place_snake(
         for k, place in enumerate(row):
             if not isinstance(grid[i, k], pygame_facade.Rect):
                 raise TypeError("Grid should consist of only Rect objects")
-            if place in state.SNAKE_PLACES:
+            if place[0] in state.SNAKE_PLACES:
                 pygame_facade.draw_rect(grid[i, k], playground.snake_color)
