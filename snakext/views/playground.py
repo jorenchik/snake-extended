@@ -3,12 +3,15 @@ import numpy.typing as npt
 from snakext.utils import pygame_facade
 import math
 from typing import Any
+from types import ModuleType
 from dataclasses import dataclass
 
 PLAYGROUND_MARGIN = 40
 WALL_MARGIN = 0
 WALL_WIDTH = 25
+FRAME_MARGIN = 5
 
+playground_position = (PLAYGROUND_MARGIN, PLAYGROUND_MARGIN)
 grid_column_count = 30
 plauground_background_color = (129, 143, 180, 255)
 wall_color = (120, 120, 120, 255)
@@ -30,28 +33,20 @@ class Playground:
 
 
 def init_playground() -> Playground:
-    playground_position = (PLAYGROUND_MARGIN, PLAYGROUND_MARGIN)
-    playground_dimensions = (pygame_facade.screen_width() -
-                             2 * playground_position[0],
-                             pygame_facade.screen_height() -
-                             2 * playground_position[1])
-    internal_grid_dimensions = (playground_dimensions[0] - 2 * WALL_WIDTH,
-                                playground_dimensions[1] - 2 * WALL_WIDTH)
-    internal_grid_position = (playground_position[0] + WALL_WIDTH,
-                              playground_position[1] + WALL_WIDTH)
+    dimensions = _playground_dimensions(pygame_facade, playground_position)
+    grid_dimensions = _playground_grid_dimensions(dimensions, WALL_WIDTH)
+    grid_position = _playground_grid_position(playground_position)
     try:
         playground_instance = Playground(
-            (PLAYGROUND_MARGIN, PLAYGROUND_MARGIN),
+            playground_position,
             (pygame_facade.screen_width() - 2 * playground_position[0],
              pygame_facade.screen_height() - 2 * playground_position[1]),
-            WALL_WIDTH,
-            make_walls(playground_position, playground_dimensions, WALL_WIDTH),
-            (playground_dimensions[0] - 2 * WALL_WIDTH,
-             playground_dimensions[1] - 2 * WALL_WIDTH),
+            WALL_WIDTH, make_walls(playground_position, dimensions,
+                                   WALL_WIDTH),
+            (dimensions[0] - 2 * WALL_WIDTH, dimensions[1] - 2 * WALL_WIDTH),
             (playground_position[0] + WALL_WIDTH,
              playground_position[1] + WALL_WIDTH),
-            make_rect_grid(internal_grid_position, internal_grid_dimensions,
-                           grid_column_count),
+            make_rect_grid(grid_position, grid_dimensions, grid_column_count),
             pygame_facade.create_color(wall_color),
             pygame_facade.create_color(plauground_background_color),
             pygame_facade.create_color(snake_color))
@@ -91,15 +86,33 @@ def make_walls(playground_position: tuple[float, float],
     return walls
 
 
+def _playground_dimensions(
+        pygame_facade: ModuleType,
+        playground_position: tuple[float, float]) -> tuple[float, float]:
+    return pygame_facade.screen_width() - 2 * playground_position[
+        0], pygame_facade.screen_height() - 2 * playground_position[1]
+
+
+def _playground_grid_dimensions(playground_dimensions: tuple[float, float],
+                                wall_width: float) -> tuple[float, float]:
+    return playground_dimensions[0] - 2 * WALL_WIDTH, playground_dimensions[
+        1] - 2 * WALL_WIDTH
+
+
+def _playground_grid_position(
+        playground_position: tuple[float, float]) -> tuple[float, float]:
+    return playground_position[0] + WALL_WIDTH, playground_position[
+        1] + WALL_WIDTH
+
+
 def _add_margin_to_frame(
     position_top_left: tuple[float, float], frame_dimensions: tuple[float,
                                                                     float]
 ) -> tuple[tuple[float, float], tuple[float, float]]:
-    frame_margin = 5
     position_top_left = vec_2d_add(position_top_left,
-                                   (frame_margin, frame_margin))
+                                   (FRAME_MARGIN, FRAME_MARGIN))
     frame_dimensions = vec_2d_add(frame_dimensions,
-                                  (-frame_margin * 2, -frame_margin * 2))
+                                  (-FRAME_MARGIN * 2, -FRAME_MARGIN * 2))
     return (position_top_left, frame_dimensions)
 
 
