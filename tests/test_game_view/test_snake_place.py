@@ -3,7 +3,7 @@ from unittest.mock import Mock, MagicMock
 from unittest import mock
 import numpy
 import numpy.typing as npt
-from snakext.utils import pygame_facade
+from snakext.facades import pygame_facade
 from snakext.views import game_view, playground
 import pygame
 

@@ -1,7 +1,7 @@
 """ Main loop that triggers the changes in the game """
 import asyncio
 from snakext.views import game_view
-from snakext.utils import pygame_facade
+from snakext.facades import pygame_facade
 
 
 async def main_loop() -> None:

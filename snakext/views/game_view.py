@@ -2,7 +2,7 @@
 import numpy as np
 import numpy.typing as npt
 from snakext.views import playground
-from snakext.utils import pygame_facade
+from snakext.facades import pygame_facade
 from typing import Any
 import types
 
