@@ -14,7 +14,7 @@ async def main_loop() -> None:
     except TypeError as e:
         raise e
     while True:
-        game_view.draw_view(playground_instance)
+        game_view.draw_game_view(playground_instance)
         await asyncio.sleep(0.5)
 
 

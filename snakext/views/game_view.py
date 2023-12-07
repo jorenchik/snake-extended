@@ -16,7 +16,7 @@ def init_game_view() -> None:
     playground_instance = playground.init_playground()
 
 
-def draw_view(playground: playground.Playground) -> None:
+def draw_game_view(playground: playground.Playground) -> None:
     _draw_contents(playground)
     pygame_facade.update_display()
 
