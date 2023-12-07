@@ -9,7 +9,8 @@ from dataclasses import dataclass
 PLAYGROUND_MARGIN = 40
 WALL_MARGIN = 0
 WALL_WIDTH = 25
-FRAME_MARGIN = 5
+FRAME_MARGIN_X = 5
+FRAME_MARGIN_Y = 5
 
 playground_position = (PLAYGROUND_MARGIN, PLAYGROUND_MARGIN)
 grid_column_count = 30
@@ -110,9 +111,9 @@ def _add_margin_to_frame(
                                                                     float]
 ) -> tuple[tuple[float, float], tuple[float, float]]:
     position_top_left = vec_2d_add(position_top_left,
-                                   (FRAME_MARGIN, FRAME_MARGIN))
+                                   (FRAME_MARGIN_X, FRAME_MARGIN_Y))
     frame_dimensions = vec_2d_add(frame_dimensions,
-                                  (-FRAME_MARGIN * 2, -FRAME_MARGIN * 2))
+                                  (-FRAME_MARGIN_X * 2, -FRAME_MARGIN_Y * 2))
     return (position_top_left, frame_dimensions)
 
 
