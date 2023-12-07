@@ -5,13 +5,14 @@ import math
 from typing import Any
 from dataclasses import dataclass
 
-SNAKE_COLUMN_COUNT = 30
 PLAYGROUND_MARGIN = 40
 WALL_MARGIN = 0
 WALL_WIDTH = 25
-PLAYGROUND_BACKGROUND_COLOR = (129, 143, 180, 255)
-WALL_COLOR = (120, 120, 120, 255)
-SNAKE_COLOR = (50, 50, 50, 255)
+
+grid_column_count = 30
+plauground_background_color = (129, 143, 180, 255)
+wall_color = (120, 120, 120, 255)
+snake_color = (50, 50, 50, 255)
 
 
 @dataclass
@@ -50,10 +51,10 @@ def init_playground() -> Playground:
             (playground_position[0] + WALL_WIDTH,
              playground_position[1] + WALL_WIDTH),
             make_rect_grid(internal_grid_position, internal_grid_dimensions,
-                           SNAKE_COLUMN_COUNT),
-            pygame_facade.create_color(WALL_COLOR),
-            pygame_facade.create_color(PLAYGROUND_BACKGROUND_COLOR),
-            pygame_facade.create_color(SNAKE_COLOR))
+                           grid_column_count),
+            pygame_facade.create_color(wall_color),
+            pygame_facade.create_color(plauground_background_color),
+            pygame_facade.create_color(snake_color))
     except pygame_facade.error as e:
         raise e
     except TypeError as e:
