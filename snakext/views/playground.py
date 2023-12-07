@@ -1,9 +1,7 @@
 import numpy as np
-import numpy.typing as npt
 from snakext.facades import pygame_facade
 from snakext.utils import math_
 import math
-from typing import Any
 from types import ModuleType
 from dataclasses import dataclass
 
@@ -28,7 +26,9 @@ class Playground:
     walls: list[pygame_facade.Rect]
     internal_playground_dimensions: tuple[float, float]
     internal_playground_position: tuple[float, float]
-    grid: npt.NDArray[Any]
+    grid: np.ndarray[tuple[int, int], np.dtype[np.object_]]
+    grid_rows: int
+    grid_cols: int
     wall_color: pygame_facade.Color
     background_color: pygame_facade.Color
     snake_color: pygame_facade.Color
@@ -38,6 +38,9 @@ def init_playground() -> Playground:
     dimensions = _playground_dimensions(pygame_facade, playground_position)
     grid_dimensions = _playground_grid_dimensions(dimensions, WALL_WIDTH)
     grid_position = _playground_grid_position(playground_position)
+    grid: np.ndarray[tuple[int, int], np.dtype[np.object_]] = make_rect_grid(
+        grid_position, grid_dimensions, grid_column_count)
+    (grid_rows, grid_cols) = grid.shape
     try:
         playground_instance = Playground(
             playground_position,
@@ -47,8 +50,7 @@ def init_playground() -> Playground:
                                    WALL_WIDTH),
             (dimensions[0] - 2 * WALL_WIDTH, dimensions[1] - 2 * WALL_WIDTH),
             (playground_position[0] + WALL_WIDTH,
-             playground_position[1] + WALL_WIDTH),
-            make_rect_grid(grid_position, grid_dimensions, grid_column_count),
+             playground_position[1] + WALL_WIDTH), grid, grid_rows, grid_cols,
             pygame_facade.create_color(wall_color),
             pygame_facade.create_color(plauground_background_color),
             pygame_facade.create_color(snake_color))
@@ -59,9 +61,10 @@ def init_playground() -> Playground:
     return playground_instance
 
 
-def make_rect_grid(position_top_left: tuple[float, float],
-                   frame_dimensions: tuple[float, float],
-                   cols: int) -> npt.NDArray[Any]:
+def make_rect_grid(
+        position_top_left: tuple[float, float], frame_dimensions: tuple[float,
+                                                                        float],
+        cols: int) -> np.ndarray[tuple[int, int], np.dtype[np.object_]]:
     (position_top_left,
      frame_dimensions) = _add_margin_to_frame(position_top_left,
                                               frame_dimensions)

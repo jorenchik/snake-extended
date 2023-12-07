@@ -14,7 +14,8 @@ def vec_2d_multiply(vec_1: tuple[float, float],
     return (vec_1[0] * vec_2[0], vec_1[1] * vec_2[1])
 
 
-def arr_2d(rows: int, cols: int, dtype: type) -> npt.NDArray[Any]:
+def arr_2d(rows: int, cols: int,
+           dtype: type) -> np.ndarray[tuple[int, int], np.dtype[np.object_]]:
     return np.empty((rows, cols), dtype=dtype)
 
 

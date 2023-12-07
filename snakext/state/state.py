@@ -1,32 +1,26 @@
 """ Contains all the state of the game. """
 
-from __future__ import annotations
 import numpy as np
 import numpy.typing as npt
+from dataclasses import dataclass
+from snakext.views import game_view
+from snakext.utils import math_
 
 
-# TODO inherit from Subject ABC
+@dataclass
 class State:
-    local_state_matrix: npt.NDArray[np.str_]
-    remote_state_matrix: npt.NDArray[np.str_]
-
-    # TODO: make Observer ABC
-    observers: list[object]
-
-    def __construct__(self, local_state_matrix: npt.NDArray[np.str_],
-                      remote_state_matrix: npt.NDArray[np.str_]) -> None:
-        self.local_state_matrix = local_state_matrix
-        self.remote_state_matrix = remote_state_matrix
-
-    def attach(self, observer: object) -> None:
-        pass
-
-    def detach(self, observer: object) -> None:
-        pass
-
-    def notify_observers(self) -> None:
-        pass
+    snake_placement: npt.NDArray[np.str_]
 
 
-# Global state object
-instance = State()
+state_instance: State
+
+
+def init_state() -> None:
+    global state_instance
+    grid_shape = (game_view.playground_instance.grid_rows,
+                  game_view.playground_instance.grid_cols)
+    element_count = grid_shape[0] * grid_shape[1]
+    snake_placement = np.empty(grid_shape, dtype=np.str_)
+    grid_contents = ['v' for x in range(element_count)]
+    math_.fill_arr_2d(snake_placement, grid_contents, *grid_shape)
+    state_instance = State(snake_placement)

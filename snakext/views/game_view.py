@@ -1,9 +1,7 @@
 """ Represents the change of the state. """
 import numpy as np
-import numpy.typing as npt
 from snakext.views import playground
 from snakext.facades import pygame_facade
-from typing import Any
 import types
 
 SNAKE_COLOR = pygame_facade.Color(50, 50, 50, 255)
@@ -16,15 +14,21 @@ def init_game_view() -> None:
     playground_instance = playground.init_playground()
 
 
-def draw_game_view(playground: playground.Playground) -> None:
-    _draw_contents(playground)
+def draw_game_view(
+        playground: playground.Playground,
+        snake_placement: np.ndarray[tuple[int, int],
+                                    np.dtype[np.str_]]) -> None:
+    _draw_contents(playground, snake_placement)
     pygame_facade.update_display()
 
 
-def _draw_contents(playground: playground.Playground) -> None:
+def _draw_contents(
+        playground: playground.Playground,
+        snake_placement: np.ndarray[tuple[int, int],
+                                    np.dtype[np.str_]]) -> None:
     pygame_facade.fill_background_with_color(playground.background_color)
     _draw_walls(playground)
-    _draw_grid(playground)
+    _place_snake(pygame_facade, playground, snake_placement, playground.grid)
 
 
 def _draw_walls(playground: playground.Playground) -> None:
@@ -38,10 +42,10 @@ def _draw_grid(playground: playground.Playground) -> None:
             pygame_facade.draw_rect(el, playground.snake_color)
 
 
-def _place_snake(pygame_facade: types.ModuleType,
-                 playground: playground.Playground,
-                 snake_placement: npt.NDArray[np.str_],
-                 grid: npt.NDArray[Any]) -> None:
+def _place_snake(
+        pygame_facade: types.ModuleType, playground: playground.Playground,
+        snake_placement: np.ndarray[tuple[int, int], np.dtype[np.str_]],
+        grid: np.ndarray[tuple[int, int], np.dtype[np.object_]]) -> None:
     for i, row in enumerate(snake_placement):
         for k, place in enumerate(row):
             if not isinstance(grid[i, k], pygame_facade.Rect):
