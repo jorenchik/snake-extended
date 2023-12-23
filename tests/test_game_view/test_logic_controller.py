@@ -38,6 +38,24 @@ class TestMoveSnake(TestCase):
             np.array_equal(self.snake_placement, new_snake_placement),
             f"{new_snake_placement} is different from {self.snake_placement}")
 
+    def test_moves_right_and_add_to_snake(self) -> None:
+        self.snake_placement = logic_controller.move_snake(
+            self.snake_placement,
+            state.RIGHT_DIRECTION,
+            state.RIGHT_DIRECTION,
+            add_to_snake=True)[0]
+        new_snake_placement = np.empty((4, 4), dtype=np.object_)
+        new_snake_placement[0] = ['v', 'v', 'v', 'v']
+        new_snake_placement[1] = [
+            f"{self.tail}3", f"{self.body}2", f"{self.body}1", f"{self.head}0"
+        ]
+        new_snake_placement[2] = ['v', 'v', 'v', 'v']
+        new_snake_placement[3] = ['v', 'v', 'v', 'v']
+        self.assertTrue(
+            np.array_equal(self.snake_placement, new_snake_placement),
+            f"{self.snake_placement} is different from expected {new_snake_placement}"
+        )
+
     def test_moves_down_space_available(self) -> None:
         self.snake_placement = logic_controller.move_snake(
             self.snake_placement, state.RIGHT_DIRECTION,

@@ -37,7 +37,9 @@ async def main_loop() -> None:
             if game_clock.moves():
                 new_snake_state = logic_controller.move_snake(
                     state_instance.snake_placement,
-                    state_instance.movement_direction, movement_key)
+                    state_instance.movement_direction,
+                    movement_key,
+                )
                 state_instance.snake_placement, state_instance.movement_direction = new_snake_state
             game_clock.add_logic_tick(pygame_facade)
 

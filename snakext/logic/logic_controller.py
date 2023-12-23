@@ -52,7 +52,7 @@ def place_initial_snake(
 
 
 def _increment_place(place: str) -> str:
-    incremented_number = int(place[1]) + 1
+    incremented_number = int(place[1:]) + 1
     place = f"{place[0]}{incremented_number}"
     return place
 
@@ -61,6 +61,7 @@ def move_snake(
     snake_placement: STRING_2D_ARR_TYPE,
     movement_direction: int,
     movement_key: int,
+    add_to_snake: bool = False,
 ) -> tuple[STRING_2D_ARR_TYPE, int]:
     head_coords = math_.coords_strstr(state.SNAKE_HEAD_PLACE, snake_placement)
     tail_coords = math_.coords_strstr(state.SNAKE_TAIL_PLACE, snake_placement)
@@ -81,9 +82,11 @@ def move_snake(
     else:
         movement_vector = movement_direction_vector
     snake_placement = _move_head(snake_placement, head_coords, movement_vector)
-    snake_placement[tail_coords] = state.VOID_PLACE
-    snake_placement[new_tail_coords] = _change_place(
-        snake_placement[new_tail_coords], state.SNAKE_TAIL_PLACE, tail_number)
+    if not add_to_snake:
+        snake_placement[tail_coords] = state.VOID_PLACE
+        snake_placement[new_tail_coords] = _change_place(
+            snake_placement[new_tail_coords], state.SNAKE_TAIL_PLACE,
+            tail_number)
     return snake_placement, movement_direction
 
 
