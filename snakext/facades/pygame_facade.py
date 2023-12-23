@@ -29,8 +29,8 @@ KEY_DIRECTION = {
 }
 
 
-def get_ticks() -> float:
-    return pygame.time.get_ticks()
+def get_ticks_seconds() -> float:
+    return pygame.time.get_ticks() / 1000
 
 
 def init_game(pygame_module: ModuleType = pygame) -> None:
@@ -60,7 +60,7 @@ def movement_direction(previous_movement_keys: list[int],
     return direction
 
 
-def tick(fps: int) -> float:
+def tick(fps: int = 0) -> float:
     global _clock
     return _clock.tick(fps) / 1000
 

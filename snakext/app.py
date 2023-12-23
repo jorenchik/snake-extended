@@ -20,22 +20,26 @@ async def main_loop() -> None:
     state_instance.snake_placement = logic_controller.place_initial_snake(
         state_instance.snake_placement)
     movement_keys: list[int] = []
+    movement_key = state.RIGHT_DIRECTION
 
     while True:
         game_clock.tick(pygame_facade)
         game_view.draw_game_view(playground_instance,
                                  state_instance.snake_placement)
+
+        movement_keys = pygame_facade.movement_keys()
+        new_movement_key = pygame_facade.movement_direction(
+            movement_keys, pygame_facade.movement_keys)
+        movement_key = new_movement_key if new_movement_key != 0 else movement_key
+        pygame_facade.pump()
+
         if game_clock.is_logic_tick(pygame_facade):
             if game_clock.moves():
-                movement_keys = pygame_facade.movement_keys()
-                movement_key = pygame_facade.movement_direction(
-                    movement_keys, pygame_facade.movement_keys)
                 new_snake_state = logic_controller.move_snake(
                     state_instance.snake_placement,
                     state_instance.movement_direction, movement_key)
                 state_instance.snake_placement, state_instance.movement_direction = new_snake_state
             game_clock.add_logic_tick(pygame_facade)
-            pygame_facade.pump()
 
 
 if __name__ == "__main__":

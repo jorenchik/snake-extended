@@ -10,16 +10,20 @@ _logic_ticks = 0
 
 def tick(pygame_facade: ModuleType) -> float:
     global _game_tick_time
-    pygame_facade.tick(TICKS_PER_SECOND)
-    _previous_tick_time = _game_tick_time
-    _game_tick_time = pygame_facade.get_ticks()
-    return _game_tick_time - _previous_tick_time
+    pygame_facade.tick()
+    current_time = pygame_facade.get_ticks_seconds()
+    time_difference = current_time - _game_tick_time
+    if time_difference >= TICK_PERIOD_SECONDS:
+        _game_tick_time = current_time
+    return time_difference
 
 
 def is_logic_tick(pygame_facade: ModuleType) -> bool:
     global _game_tick_time
-    is_tick = pygame_facade.get_ticks(
-    ) - _game_tick_time >= TICK_PERIOD_SECONDS
+    time_since_last_game_tick = pygame_facade.get_ticks_seconds(
+    ) - _game_tick_time
+
+    is_tick = time_since_last_game_tick >= TICK_PERIOD_SECONDS
     return is_tick
 
 
