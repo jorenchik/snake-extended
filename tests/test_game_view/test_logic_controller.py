@@ -10,6 +10,30 @@ from unittest.mock import MagicMock
 class TestMoveSnake(TestCase):
 
     def setUp(self) -> None:
-        self.snake_placement = np.empty((4, 4), dtype=np.object_)
-        for i in range(0, 4):
-            self.snake_placement[i] = np.array(['v' for x in range(0, 4)])
+        self.snake_placement = np.full((4, 4), 'v', dtype=np.object_)
+
+
+class TestPlaceInitialSnake(TestCase):
+
+    def setUp(self) -> None:
+        self.snake_placement = np.full((4, 4), 'v', dtype=np.object_)
+
+    def test_places_snake_to_empty_field(self) -> None:
+        choose_function = MagicMock()
+        position = 1, 2
+        choose_function.return_value = position
+        post_snake_placement = np.copy(self.snake_placement)
+        self.snake_placement = logic_controller.place_initial_snake(
+            self.snake_placement, choose_function)
+        post_snake_placement[position[0], position[1]] = 's0'
+        self.assertTrue(
+            np.array_equal(self.snake_placement, post_snake_placement),
+            f"{post_snake_placement} is different from {self.snake_placement}")
+
+    def test_raise_value_error_if_a_snake_is_already_present(self) -> None:
+        choose_function = MagicMock()
+        position = 1, 2
+        choose_function.return_value = position
+        self.snake_placement[2, 2] = 's0'
+        self.assertRaises(ValueError, logic_controller.place_initial_snake,
+                          self.snake_placement, choose_function)
