@@ -118,7 +118,3 @@ def _change_place(place: str,
     number = number if number != -1 else int(place[1])
     new_place = f"{letter}{number}"
     return new_place
-
-
-def movement_direction() -> int:
-    return 1
