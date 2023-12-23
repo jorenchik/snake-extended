@@ -12,7 +12,7 @@ POSSIBLE_OFFSETS = {
 
 
 def move_snake(
-    snake_placement: np.ndarray[tuple[int, int], np.dtype[np.object_]],
+    snake_placement: np.ndarray[tuple[int, int], np.dtype[np.str_]],
     key: int,
 ) -> np.ndarray[tuple[int, int], np.dtype[np.str_]]:
     return snake_placement
