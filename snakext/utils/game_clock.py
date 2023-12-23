@@ -27,7 +27,7 @@ def is_logic_tick(pygame_facade: ModuleType) -> bool:
     return is_tick
 
 
-def add_logic_tick(pygame_facade: ModuleType) -> None:
+def logic_tick(pygame_facade: ModuleType) -> None:
     global _logic_ticks
     _logic_ticks += 1
 

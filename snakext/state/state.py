@@ -26,12 +26,13 @@ class State:
     snake_placement: state_types.OBJECT_ND_ARRAY
     food_placement: state_types.OBJECT_ND_ARRAY
     movement_direction: int
+    previous_snake_placement: state_types.OBJECT_ND_ARRAY
 
 
 state_instance: State
 
 
-def init_state(grid_rows: int, grid_cols: int) -> None:
+def init_state(grid_rows: int, grid_cols: int) -> State:
     global state_instance
     grid_shape = (grid_rows, grid_cols)
     element_count = grid_shape[0] * grid_shape[1]
@@ -45,4 +46,6 @@ def init_state(grid_rows: int, grid_cols: int) -> None:
         snake_placement,
         food_placement,
         RIGHT_DIRECTION,
+        snake_placement,
     )
+    return state_instance

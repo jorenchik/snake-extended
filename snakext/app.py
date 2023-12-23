@@ -7,50 +7,84 @@ from snakext.state import state
 from snakext.utils import game_clock
 
 
-async def main_loop() -> None:
+async def init_app() -> None:
     pygame_facade.init_game()
-    try:
-        game_view.init_game_view()
-        playground_instance = game_view.playground_instance
-    except pygame_facade.error:
-        raise pygame_facade.error
-    state.init_state(playground_instance.grid_rows,
-                     playground_instance.grid_cols)
-    state_instance = state.state_instance
+    game_view.init_game_view()
+    playground_instance = game_view.playground_instance
+    state_instance = state.init_state(
+        playground_instance.grid_rows,
+        playground_instance.grid_cols,
+    )
     state_instance.snake_placement = logic_controller.place_initial_snake(
-        state_instance.snake_placement)
-    movement_keys: list[int] = []
+        state_instance.snake_placement, )
+    state_instance.previous_snake_placement = state_instance.snake_placement
+    await main_loop(playground_instance, state_instance)
+
+
+async def main_loop(playground_instance: game_view.playground.Playground,
+                    state_instance: state.State) -> None:
     movement_key = state.RIGHT_DIRECTION
-    previous_snake_placement = state_instance.snake_placement
 
     while True:
         game_clock.tick(pygame_facade)
-        game_view.draw_game_view(playground_instance,
-                                 state_instance.snake_placement,
-                                 state_instance.food_placement)
-
-        movement_keys = pygame_facade.movement_keys()
-        new_movement_key = pygame_facade.movement_direction(
-            movement_keys, pygame_facade.movement_keys)
-        movement_key = new_movement_key if new_movement_key != 0 else movement_key
+        current_movement_keys = pygame_facade.movement_keys()
+        draw(playground_instance, state_instance)
+        movement_key = pygame_facade.movement_key(
+            current_movement_keys,
+            pygame_facade.movement_keys,
+            movement_key,
+        )
+        if not handle_logic_tick(
+                playground_instance,
+                state_instance,
+                movement_key,
+        ):
+            break
         pygame_facade.pump()
 
-        if game_clock.is_logic_tick(pygame_facade):
-            if game_clock.moves():
-                previous_snake_placement = state_instance.snake_placement
-                new_snake_state = logic_controller.move_snake(
-                    state_instance.snake_placement,
-                    state_instance.movement_direction,
-                    movement_key,
-                )
-                state_instance.snake_placement, state_instance.movement_direction = new_snake_state
-                if logic_controller.check_collision(
-                        state_instance.snake_placement,
-                        previous_snake_placement,
-                        only_head=True):
-                    break
-            game_clock.add_logic_tick(pygame_facade)
+
+def handle_logic_tick(
+    playground_instance: game_view.playground.Playground,
+    state_instance: state.State,
+    movement_key: int,
+) -> bool:
+    if game_clock.is_logic_tick(pygame_facade):
+        moved_successfully = move_snake(state_instance, movement_key)
+        if not moved_successfully:
+            return False
+        game_clock.logic_tick(pygame_facade)
+    return True
+
+
+def draw(
+    playground_instance: game_view.playground.Playground,
+    state_instance: state.State,
+) -> None:
+    game_view.draw_game_view(
+        playground_instance,
+        state_instance.snake_placement,
+        state_instance.food_placement,
+    )
+
+
+def move_snake(
+    state_instance: state.State,
+    movement_key: int,
+) -> bool:
+    if game_clock.moves():
+        state_instance.previous_snake_placement = state_instance.snake_placement
+        state_instance.snake_placement, state_instance.movement_direction = logic_controller.move_snake(
+            state_instance.snake_placement,
+            state_instance.movement_direction,
+            movement_key,
+        )
+        if logic_controller.check_collision(
+                state_instance.snake_placement,
+                state_instance.previous_snake_placement,
+                only_head=True):
+            return False
+    return True
 
 
 if __name__ == "__main__":
-    asyncio.run(main_loop())
+    asyncio.run(init_app())

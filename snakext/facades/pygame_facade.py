@@ -46,6 +46,16 @@ Color = pygame.Color
 error = pygame.error
 
 
+def movement_key(previous_keys: list[int],
+                 get_movement_keys: Callable[[], list[int]],
+                 default_movement_key: int) -> int:
+    new_movement_key = movement_direction(
+        previous_keys,
+        get_movement_keys,
+    )
+    return new_movement_key if new_movement_key != 0 else default_movement_key
+
+
 def movement_direction(previous_movement_keys: list[int],
                        get_keys: Callable[[], list[int]]) -> int:
     pressed_keys = get_keys()
