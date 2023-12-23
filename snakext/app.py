@@ -26,7 +26,8 @@ async def main_loop() -> None:
     while True:
         game_clock.tick(pygame_facade)
         game_view.draw_game_view(playground_instance,
-                                 state_instance.snake_placement)
+                                 state_instance.snake_placement,
+                                 state_instance.food_placement)
 
         movement_keys = pygame_facade.movement_keys()
         new_movement_key = pygame_facade.movement_direction(

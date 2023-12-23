@@ -34,6 +34,28 @@ def _choose_random(matrix: STRING_2D_ARR_TYPE) -> tuple[int, int]:
     return random_row, random_col
 
 
+def _choose_match(match_: str, matrix: STRING_2D_ARR_TYPE) -> tuple[int, int]:
+
+    available_coords = []
+    for i, row in enumerate(matrix):
+        for k, place in enumerate(row):
+            if place == match_:
+                available_coords.append((i, k))
+    chosen_coordinates = random.choice(available_coords)
+    return chosen_coordinates
+
+
+def place_food(food_placement: STRING_2D_ARR_TYPE,
+               other_placement: STRING_2D_ARR_TYPE,
+               choose_coordinates: typing.Callable[[str, STRING_2D_ARR_TYPE],
+                                                   tuple[int,
+                                                         int]] = _choose_match,
+               where_to_place: str = state.VOID_PLACE) -> STRING_2D_ARR_TYPE:
+    i, k = choose_coordinates(where_to_place, food_placement)
+    food_placement[i, k] = state.FOOD_PLACE
+    return food_placement
+
+
 def place_initial_snake(
     snake_placement: STRING_2D_ARR_TYPE,
     choose_coordinates: typing.Callable[[STRING_2D_ARR_TYPE],

@@ -455,3 +455,45 @@ class TestPlaceInitialSnake(TestCase):
         self.snake_placement[2, 2] = SNAKE_INITIAL_PLACE
         self.assertRaises(ValueError, logic_controller.place_initial_snake,
                           self.snake_placement, choose_function)
+
+
+class TestPlaceInitialSnake(TestCase):
+
+    def setUp(self) -> None:
+        self.food_placement = np.full((4, 4), 'v', dtype=np.object_)
+        self.other_placement = np.full((4, 4), 'v', dtype=np.object_)
+        self.head = state.SNAKE_HEAD_PLACE
+        self.body = state.SNAKE_BODY_PLACE
+        self.tail = state.SNAKE_TAIL_PLACE
+
+    def test_places_food_with_available_places(self) -> None:
+        choose_function = MagicMock()
+        position = 0, 1
+        choose_function.return_value = position
+
+        placement1 = np.empty((4, 4), dtype=np.object_)
+        placement1[0] = ['v', 'v', 'v', 'v']
+        placement1[1] = [f"{self.tail}2", f"{self.body}1", 'v', 'v']
+        placement1[2] = ['v', f"{self.head}0", 'v', 'v']
+        placement1[3] = ['v', 'v', 'v', 'v']
+        self.other_placement = placement1
+
+        placement2 = np.empty((4, 4), dtype=np.object_)
+        placement2[0] = ['v', 'v', 'v', 'f']
+        placement2[1] = ['v', 'f', 'v', 'v']
+        placement2[2] = ['v', 'v', 'v', 'f']
+        placement2[3] = ['v', 'v', 'v', 'v']
+        self.food_placement = placement2
+
+        placement3 = np.empty((4, 4), dtype=np.object_)
+        placement3[0] = ['v', 'f', 'v', 'f']
+        placement3[1] = ['v', 'f', 'v', 'v']
+        placement3[2] = ['v', 'v', 'v', 'f']
+        placement3[3] = ['v', 'v', 'v', 'v']
+        self.food_placement = placement2
+        self.snake_placement = logic_controller.place_food(
+            self.food_placement, self.other_placement, choose_function,
+            state.FOOD_PLACE)
+        self.assertTrue(
+            np.array_equal(self.snake_placement, placement3),
+            f"{self.snake_placement} is different from {placement3}")

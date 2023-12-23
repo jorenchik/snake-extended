@@ -14,17 +14,26 @@ def init_game_view() -> None:
     playground_instance = playground.init_playground()
 
 
-def draw_game_view(playground: playground.Playground,
-                   snake_placement: state_types.OBJECT_ND_ARRAY) -> None:
-    _draw_contents(playground, snake_placement)
+def draw_game_view(
+    playground: playground.Playground,
+    snake_placement: state_types.OBJECT_ND_ARRAY,
+    food_placement: state_types.OBJECT_ND_ARRAY,
+) -> None:
+    _draw_contents(playground, snake_placement, food_placement)
     pygame_facade.update_display()
 
 
-def _draw_contents(playground: playground.Playground,
-                   snake_placement: state_types.OBJECT_ND_ARRAY) -> None:
+def _draw_contents(
+    playground: playground.Playground,
+    snake_placement: state_types.OBJECT_ND_ARRAY,
+    food_placement: state_types.OBJECT_ND_ARRAY,
+) -> None:
     pygame_facade.fill_background_with_color(playground.background_color)
     _draw_walls(playground)
-    _place_snake(pygame_facade, playground, snake_placement, playground.grid)
+    _place_food(pygame_facade, playground, food_placement,
+                playground.food_grid)
+    _place_snake(pygame_facade, playground, snake_placement,
+                 playground.snake_grid)
 
 
 def _draw_walls(playground: playground.Playground) -> None:
@@ -33,7 +42,7 @@ def _draw_walls(playground: playground.Playground) -> None:
 
 
 def _draw_grid(playground: playground.Playground) -> None:
-    for row in playground.grid:
+    for row in playground.snake_grid:
         for el in row:
             pygame_facade.draw_rect(el, playground.snake_color)
 
@@ -48,3 +57,15 @@ def _place_snake(pygame_facade: ModuleType, playground: playground.Playground,
                 raise TypeError("Grid should consist of only Rect objects")
             if place[0] in state.SNAKE_PLACES:
                 pygame_facade.draw_rect(grid[i, k], playground.snake_color)
+
+
+def _place_food(pygame_facade: ModuleType, playground: playground.Playground,
+                food_placement: state_types.OBJECT_ND_ARRAY,
+                grid: state_types.OBJECT_ND_ARRAY) -> None:
+
+    for i, row in enumerate(food_placement):
+        for k, place in enumerate(row):
+            if not isinstance(grid[i, k], pygame_facade.Rect):
+                raise TypeError("Grid should consist of only Rect objects")
+            if place == state.FOOD_PLACE:
+                pygame_facade.draw_rect(grid[i, k], playground.food_color)
