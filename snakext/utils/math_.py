@@ -2,6 +2,7 @@ import numpy as np
 import numpy.typing as npt
 from typing import Any
 import math
+from snakext import state_types
 
 
 def vec_2d_add(vec_1: tuple[float, float],
@@ -14,8 +15,7 @@ def vec_2d_multiply(vec_1: tuple[float, float],
     return (vec_1[0] * vec_2[0], vec_1[1] * vec_2[1])
 
 
-def arr_2d(rows: int, cols: int,
-           dtype: type) -> np.ndarray[tuple[int, int], np.dtype[np.object_]]:
+def arr_2d(rows: int, cols: int, dtype: type) -> state_types.OBJECT_ND_ARRAY:
     return np.empty((rows, cols), dtype=dtype)
 
 

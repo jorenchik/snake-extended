@@ -6,13 +6,14 @@ import numpy.typing as npt
 from snakext.facades import pygame_facade
 from snakext.state import state
 from snakext.views import game_view, playground
+from snakext import state_types
 import pygame
 
 
 class TestPlaceSnake(unittest.TestCase):
     playground_instance: Mock
     pygame_facade_instance: Mock
-    grid: numpy.ndarray[tuple[int, int], numpy.dtype[numpy.object_]]
+    grid: state_types.OBJECT_ND_ARRAY
     snake_color: pygame_facade.Color
 
     @classmethod

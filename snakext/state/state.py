@@ -4,6 +4,7 @@ import numpy as np
 import numpy.typing as npt
 from dataclasses import dataclass
 from snakext.utils import math_
+from snakext import state_types
 
 VOID_PLACE = 'v'
 SNAKE_BODY_PLACE = 'b'
@@ -18,12 +19,10 @@ BOTTOM_DIRECTION = 2
 RIGHT_DIRECTION = 3
 LEFT_DIRECTION = 4
 
-STRING_2D_ARR_TYPE = np.ndarray[tuple[int, int], np.dtype[np.object_]]
-
 
 @dataclass
 class State:
-    snake_placement: STRING_2D_ARR_TYPE
+    snake_placement: state_types.OBJECT_ND_ARRAY
     snake_direction: int
 
 
