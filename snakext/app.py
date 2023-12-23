@@ -4,10 +4,7 @@ from snakext.views import game_view
 from snakext.facades import pygame_facade
 from snakext.logic import logic_controller
 from snakext.state import state
-
-TICKS_PER_SECOND = 30
-TICK_PERIOD_SECONDS = 1 / TICKS_PER_SECOND
-TICK_PER_MOVE = 5
+from snakext.utils import game_clock
 
 
 async def main_loop() -> None:
@@ -23,17 +20,13 @@ async def main_loop() -> None:
     state_instance.snake_placement = logic_controller.place_initial_snake(
         state_instance.snake_placement)
     movement_keys: list[int] = []
-    previous_tick_time = pygame_facade.get_ticks()
-    current_time = previous_tick_time
-    ticks = 0
+
     while True:
-        pygame_facade.tick(TICKS_PER_SECOND)
-        current_time += previous_tick_time
+        game_clock.tick(pygame_facade)
         game_view.draw_game_view(playground_instance,
                                  state_instance.snake_placement)
-        if current_time - previous_tick_time >= TICK_PERIOD_SECONDS:
-            ticks += 1
-            if ticks % TICK_PER_MOVE == 0:
+        if game_clock.is_logic_tick(pygame_facade):
+            if game_clock.moves():
                 movement_keys = pygame_facade.movement_keys()
                 movement_key = pygame_facade.movement_direction(
                     movement_keys, pygame_facade.movement_keys)
@@ -41,8 +34,8 @@ async def main_loop() -> None:
                     state_instance.snake_placement,
                     state_instance.movement_direction, movement_key)
                 state_instance.snake_placement, state_instance.movement_direction = new_snake_state
+            game_clock.add_logic_tick(pygame_facade)
             pygame_facade.pump()
-            previous_tick_time = current_time
 
 
 if __name__ == "__main__":
