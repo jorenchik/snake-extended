@@ -18,6 +18,7 @@ STRING_2D_ARR_TYPE = np.ndarray[tuple[int, int], np.dtype[np.object_]]
 HEAD_PLACE = f"{state.SNAKE_HEAD_PLACE}0"
 INITIAL_BODY_PLACE = f"{state.SNAKE_BODY_PLACE}1"
 INITIAL_TAIL_PLACE = f"{state.SNAKE_TAIL_PLACE}2"
+COORDINATES_NOT_FOUND = (-1, -1)
 
 
 def _middle_left(matrix: STRING_2D_ARR_TYPE) -> tuple[int, int]:
@@ -88,6 +89,28 @@ def move_snake(
             snake_placement[new_tail_coords], state.SNAKE_TAIL_PLACE,
             tail_number)
     return snake_placement, movement_direction
+
+
+def check_collision(placement1: STRING_2D_ARR_TYPE,
+                    placement2: STRING_2D_ARR_TYPE,
+                    only_head: bool = True) -> bool:
+    collision_found = _search_collision(
+        placement1, placement2, only_head=only_head) != COORDINATES_NOT_FOUND
+    return collision_found
+
+
+def _search_collision(placement1: STRING_2D_ARR_TYPE,
+                      placement2: STRING_2D_ARR_TYPE,
+                      only_head: bool = False) -> tuple[int, int]:
+    coordinates = COORDINATES_NOT_FOUND
+    for i, row in enumerate(placement1):
+        for k, place in enumerate(placement1):
+            if (not only_head or placement1[i, k][0] == state.SNAKE_HEAD_PLACE
+                ) and placement1[i, k] != state.VOID_PLACE and placement2[
+                    i, k] != state.VOID_PLACE:
+                coordinates = (i, k)
+                break
+    return coordinates
 
 
 def _is_opposite(vec1: tuple[int, int], vec2: tuple[int, int]) -> bool:

@@ -21,6 +21,7 @@ async def main_loop() -> None:
         state_instance.snake_placement)
     movement_keys: list[int] = []
     movement_key = state.RIGHT_DIRECTION
+    previous_snake_placement = state_instance.snake_placement
 
     while True:
         game_clock.tick(pygame_facade)
@@ -35,12 +36,18 @@ async def main_loop() -> None:
 
         if game_clock.is_logic_tick(pygame_facade):
             if game_clock.moves():
+                previous_snake_placement = state_instance.snake_placement
                 new_snake_state = logic_controller.move_snake(
                     state_instance.snake_placement,
                     state_instance.movement_direction,
                     movement_key,
                 )
                 state_instance.snake_placement, state_instance.movement_direction = new_snake_state
+                if logic_controller.check_collision(
+                        state_instance.snake_placement,
+                        previous_snake_placement,
+                        only_head=True):
+                    break
             game_clock.add_logic_tick(pygame_facade)
 
 

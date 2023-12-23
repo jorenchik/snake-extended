@@ -308,6 +308,124 @@ class TestMoveSnake(TestCase):
             f"{new_snake_placement} is different from {self.snake_placement}")
 
 
+class TestCheckCollision(TestCase):
+
+    def setUp(self) -> None:
+        self.placement1 = np.empty((4, 4), dtype=np.object_)
+        self.placement2 = np.empty((4, 4), dtype=np.object_)
+        self.head = state.SNAKE_HEAD_PLACE
+        self.body = state.SNAKE_BODY_PLACE
+        self.tail = state.SNAKE_TAIL_PLACE
+
+    def test_find_collision(self):
+        placement1 = np.empty((4, 4), dtype=np.object_)
+        placement1[0] = ['v', 'v', 'v', 'v']
+        placement1[1] = [
+            f"{self.tail}2", f"{self.body}1", f"{self.head}0", 'v'
+        ]
+        placement1[2] = ['v', 'v', 'v', 'v']
+        placement1[3] = ['v', 'v', 'v', 'v']
+        self.placement1 = placement1
+
+        placement2 = np.empty((4, 4), dtype=np.object_)
+        placement2[0] = ['v', 'v', 'v', 'v']
+        placement2[1] = ['v', 'v', f"{self.tail}2", 'v']
+        placement2[2] = ['v', 'v', f"{self.body}1", 'v']
+        placement2[3] = ['v', 'v', f"{self.head}0", 'v']
+        self.placement2 = placement2
+
+        collision_coordinates = logic_controller._search_collision(
+            self.placement1, self.placement2)
+        self.assertEqual((1, 2), collision_coordinates)
+
+    def test_find_collision_collides_only_body(self):
+        placement1 = np.empty((4, 4), dtype=np.object_)
+        placement1[0] = ['v', 'v', 'v', 'v']
+        placement1[1] = [
+            f"{self.tail}3",
+            f"{self.body}2",
+            f"{self.body}1",
+            f"{self.head}0",
+        ]
+        placement1[2] = ['v', 'v', 'v', 'v']
+        placement1[3] = ['v', 'v', 'v', 'v']
+        self.placement1 = placement1
+
+        placement2 = np.empty((4, 4), dtype=np.object_)
+        placement2[0] = ['v', 'v', 'v', 'v']
+        placement2[1] = ['v', 'v', f"{self.tail}2", 'v']
+        placement2[2] = ['v', 'v', f"{self.body}1", 'v']
+        placement2[3] = ['v', 'v', f"{self.head}0", 'v']
+        self.placement2 = placement2
+
+        collision_coordinates = logic_controller._search_collision(
+            self.placement1, self.placement2)
+        self.assertEqual((1, 2), collision_coordinates)
+
+    def test_find_collision_only_head_finds(self):
+        placement1 = np.empty((4, 4), dtype=np.object_)
+        placement1[0] = ['v', 'v', 'v', 'v']
+        placement1[1] = [
+            f"{self.tail}2", f"{self.body}1", f"{self.head}0", 'v'
+        ]
+        placement1[2] = ['v', 'v', 'v', 'v']
+        placement1[3] = ['v', 'v', 'v', 'v']
+        self.placement1 = placement1
+
+        placement2 = np.empty((4, 4), dtype=np.object_)
+        placement2[0] = ['v', 'v', 'v', 'v']
+        placement2[1] = ['v', 'v', f"{self.tail}2", 'v']
+        placement2[2] = ['v', 'v', f"{self.body}1", 'v']
+        placement2[3] = ['v', 'v', f"{self.head}0", 'v']
+        self.placement2 = placement2
+
+        collision_coordinates = logic_controller._search_collision(
+            self.placement1, self.placement2, only_head=True)
+        self.assertEqual((1, 2), collision_coordinates)
+
+    def test_find_collision_only_head_collides_only_body(self):
+        placement1 = np.empty((4, 4), dtype=np.object_)
+        placement1[0] = ['v', 'v', 'v', 'v']
+        placement1[1] = [
+            f"{self.tail}3", f"{self.body}2", f"{self.body}1", f"{self.head}0"
+        ]
+        placement1[2] = ['v', 'v', 'v', 'v']
+        placement1[3] = ['v', 'v', 'v', 'v']
+        self.placement1 = placement1
+
+        placement2 = np.empty((4, 4), dtype=np.object_)
+        placement2[0] = ['v', 'v', 'v', 'v']
+        placement2[1] = ['v', 'v', f"{self.tail}2", 'v']
+        placement2[2] = ['v', 'v', f"{self.body}1", 'v']
+        placement2[3] = ['v', 'v', f"{self.head}0", 'v']
+        self.placement2 = placement2
+
+        collision_coordinates = logic_controller._search_collision(
+            self.placement1, self.placement2, only_head=True)
+        self.assertEqual(logic_controller.COORDINATES_NOT_FOUND,
+                         collision_coordinates)
+
+    def test_collistion_not_found(self):
+        placement1 = np.empty((4, 4), dtype=np.object_)
+        placement1[0] = ['v', 'v', 'v', 'v']
+        placement1[1] = [f"{self.tail}2", f"{self.body}1", 'v', 'v']
+        placement1[2] = ['v', f"{self.head}0", 'v', 'v']
+        placement1[3] = ['v', 'v', 'v', 'v']
+        self.placement1 = placement1
+
+        placement2 = np.empty((4, 4), dtype=np.object_)
+        placement2[0] = ['v', 'v', 'v', 'v']
+        placement2[1] = ['v', 'v', f"{self.tail}2", 'v']
+        placement2[2] = ['v', 'v', f"{self.body}1", 'v']
+        placement2[3] = ['v', 'v', f"{self.head}0", 'v']
+        self.placement2 = placement2
+
+        collision_coordinates = logic_controller._search_collision(
+            self.placement1, self.placement2)
+        self.assertEqual(logic_controller.COORDINATES_NOT_FOUND,
+                         collision_coordinates)
+
+
 class TestPlaceInitialSnake(TestCase):
 
     def setUp(self) -> None:
