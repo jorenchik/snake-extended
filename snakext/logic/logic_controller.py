@@ -107,6 +107,9 @@ def _move_head(snake_placement: STRING_2D_ARR_TYPE,
                movement_vector: tuple[int, int]) -> STRING_2D_ARR_TYPE:
     new_snake_head_coords = (snake_head_coords[0] + movement_vector[0],
                              snake_head_coords[1] + movement_vector[1])
+    dim_y, dim_x = snake_placement.shape
+    new_snake_head_coords = (new_snake_head_coords[0] % dim_y,
+                             new_snake_head_coords[1] % dim_x)
     snake_placement[new_snake_head_coords] = HEAD_PLACE
     return snake_placement
 
