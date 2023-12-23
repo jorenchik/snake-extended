@@ -12,7 +12,192 @@ SNAKE_INITIAL_PLACE = f"{state.SNAKE_HEAD_PLACE}0"
 class TestMoveSnake(TestCase):
 
     def setUp(self) -> None:
-        self.snake_placement = np.full((4, 4), 'v', dtype=np.object_)
+        self.snake_placement = np.empty((4, 4), dtype=np.object_)
+        self.head = state.SNAKE_HEAD_PLACE
+        self.body = state.SNAKE_BODY_PLACE
+        self.tail = state.SNAKE_TAIL_PLACE
+        self.snake_placement[0] = ['v', 'v', 'v', 'v']
+        self.snake_placement[1] = [
+            f"{self.tail}2", f"{self.body}1", f"{self.head}0", 'v'
+        ]
+        self.snake_placement[2] = ['v', 'v', 'v', 'v']
+        self.snake_placement[3] = ['v', 'v', 'v', 'v']
+
+    def test_moves_right_space_available(self) -> None:
+        self.snake_placement = logic_controller.move_snake(
+            self.snake_placement, state.RIGHT_DIRECTION,
+            state.RIGHT_DIRECTION)[0]
+        new_snake_placement = np.empty((4, 4), dtype=np.object_)
+        new_snake_placement[0] = ['v', 'v', 'v', 'v']
+        new_snake_placement[1] = [
+            'v', f"{self.tail}2", f"{self.body}1", f"{self.head}0"
+        ]
+        new_snake_placement[2] = ['v', 'v', 'v', 'v']
+        new_snake_placement[3] = ['v', 'v', 'v', 'v']
+        self.assertTrue(
+            np.array_equal(self.snake_placement, new_snake_placement),
+            f"{new_snake_placement} is different from {self.snake_placement}")
+
+    def test_moves_down_space_available(self) -> None:
+        self.snake_placement = logic_controller.move_snake(
+            self.snake_placement, state.RIGHT_DIRECTION,
+            state.BOTTOM_DIRECTION)[0]
+        new_snake_placement = np.empty((4, 4), dtype=np.object_)
+        new_snake_placement[0] = ['v', 'v', 'v', 'v']
+        new_snake_placement[1] = ['v', f"{self.tail}2", f"{self.body}1", 'v']
+        new_snake_placement[2] = ['v', 'v', f"{self.head}0", 'v']
+        new_snake_placement[3] = ['v', 'v', 'v', 'v']
+        self.assertTrue(
+            np.array_equal(self.snake_placement, new_snake_placement),
+            f"{new_snake_placement} is different from {self.snake_placement}")
+
+    def test_moves_up_space_available(self) -> None:
+        self.snake_placement = logic_controller.move_snake(
+            self.snake_placement, state.RIGHT_DIRECTION,
+            state.TOP_DIRECTION)[0]
+        new_snake_placement = np.empty((4, 4), dtype=np.object_)
+        new_snake_placement[0] = ['v', 'v', f"{self.head}0", 'v']
+        new_snake_placement[1] = ['v', f"{self.tail}2", f"{self.body}1", 'v']
+        new_snake_placement[2] = ['v', 'v', 'v', 'v']
+        new_snake_placement[3] = ['v', 'v', 'v', 'v']
+        self.assertTrue(
+            np.array_equal(self.snake_placement, new_snake_placement),
+            f"{new_snake_placement} is different from {self.snake_placement}")
+
+    def test_moves_left_space_available(self) -> None:
+        snake_placement = np.empty((4, 4), dtype=np.object_)
+        snake_placement[0] = ['v', 'v', 'v', 'v']
+        snake_placement[1] = [
+            'v', f"{self.head}0", f"{self.body}1", f"{self.tail}2"
+        ]
+        snake_placement[2] = ['v', 'v', 'v', 'v']
+        snake_placement[3] = ['v', 'v', 'v', 'v']
+        self.snake_placement = snake_placement
+        self.snake_placement = logic_controller.move_snake(
+            self.snake_placement, state.LEFT_DIRECTION,
+            state.LEFT_DIRECTION)[0]
+        new_snake_placement = np.empty((4, 4), dtype=np.object_)
+        new_snake_placement[0] = ['v', 'v', 'v', 'v']
+        new_snake_placement[1] = [
+            f"{self.head}0", f"{self.body}1", f"{self.tail}2", 'v'
+        ]
+        new_snake_placement[2] = ['v', 'v', 'v', 'v']
+        new_snake_placement[3] = ['v', 'v', 'v', 'v']
+        self.assertTrue(
+            np.array_equal(self.snake_placement, new_snake_placement),
+            f"{new_snake_placement} is different from {self.snake_placement}")
+
+    def test_moves_right_opposite_direction(self) -> None:
+        snake_placement = np.empty((4, 4), dtype=np.object_)
+        snake_placement[0] = ['v', 'v', 'v', 'v']
+        snake_placement[1] = [
+            'v', f"{self.head}0", f"{self.body}1", f"{self.tail}2"
+        ]
+        snake_placement[2] = ['v', 'v', 'v', 'v']
+        snake_placement[3] = ['v', 'v', 'v', 'v']
+        self.snake_placement = snake_placement
+        self.snake_placement = logic_controller.move_snake(
+            self.snake_placement, state.LEFT_DIRECTION,
+            state.RIGHT_DIRECTION)[0]
+        new_snake_placement = np.empty((4, 4), dtype=np.object_)
+        new_snake_placement[0] = ['v', 'v', 'v', 'v']
+        new_snake_placement[1] = [
+            f"{self.head}0", f"{self.body}1", f"{self.tail}2", 'v'
+        ]
+        new_snake_placement[2] = ['v', 'v', 'v', 'v']
+        new_snake_placement[3] = ['v', 'v', 'v', 'v']
+        self.assertTrue(
+            np.array_equal(self.snake_placement, new_snake_placement),
+            f"{new_snake_placement} is different from {self.snake_placement}")
+
+    def test_moves_bottom_opposite_direction(self) -> None:
+        snake_placement = np.empty((4, 4), dtype=np.object_)
+        snake_placement[0] = ['v', 'v', 'v', 'v']
+        snake_placement[1] = ['v', 'v', f"{self.head}0", 'v']
+        snake_placement[2] = ['v', 'v', f"{self.body}1", 'v']
+        snake_placement[3] = ['v', 'v', f"{self.tail}2", 'v']
+        self.snake_placement = snake_placement
+        new_snake_placement = np.empty((4, 4), dtype=np.object_)
+        new_snake_placement[0] = ['v', 'v', f"{self.head}0", 'v']
+        new_snake_placement[1] = ['v', 'v', f"{self.body}1", 'v']
+        new_snake_placement[2] = ['v', 'v', f"{self.tail}2", 'v']
+        new_snake_placement[3] = ['v', 'v', 'v', 'v']
+        self.snake_placement = logic_controller.move_snake(
+            self.snake_placement, state.TOP_DIRECTION,
+            state.BOTTOM_DIRECTION)[0]
+        self.assertTrue(
+            np.array_equal(self.snake_placement, new_snake_placement),
+            f"{self.snake_placement} is different from {new_snake_placement}")
+
+    def test_moves_top_opposite_direction(self) -> None:
+        snake_placement = np.empty((4, 4), dtype=np.object_)
+        snake_placement[0] = ['v', 'v', f"{self.tail}2", 'v']
+        snake_placement[1] = ['v', 'v', f"{self.body}1", 'v']
+        snake_placement[2] = ['v', 'v', f"{self.head}0", 'v']
+        snake_placement[3] = ['v', 'v', 'v', 'v']
+        self.snake_placement = snake_placement
+        new_snake_placement = np.empty((4, 4), dtype=np.object_)
+        new_snake_placement[0] = ['v', 'v', 'v', 'v']
+        new_snake_placement[1] = ['v', 'v', f"{self.tail}2", 'v']
+        new_snake_placement[2] = ['v', 'v', f"{self.body}1", 'v']
+        new_snake_placement[3] = ['v', 'v', f"{self.head}0", 'v']
+        self.snake_placement = logic_controller.move_snake(
+            self.snake_placement, state.BOTTOM_DIRECTION,
+            state.TOP_DIRECTION)[0]
+        self.assertTrue(
+            np.array_equal(self.snake_placement, new_snake_placement),
+            f"{self.snake_placement} is different from {new_snake_placement}")
+
+    def test_moves_left_opposite_direction(self) -> None:
+        snake_placement = np.empty((4, 4), dtype=np.object_)
+        snake_placement[0] = ['v', 'v', 'v', 'v']
+        snake_placement[1] = [
+            f"{self.tail}2",
+            f"{self.body}1",
+            f"{self.head}0",
+            'v',
+        ]
+        snake_placement[2] = ['v', 'v', 'v', 'v']
+        snake_placement[3] = ['v', 'v', 'v', 'v']
+        self.snake_placement = snake_placement
+        self.snake_placement = logic_controller.move_snake(
+            self.snake_placement, state.RIGHT_DIRECTION,
+            state.LEFT_DIRECTION)[0]
+        new_snake_placement = np.empty((4, 4), dtype=np.object_)
+        new_snake_placement[0] = ['v', 'v', 'v', 'v']
+        new_snake_placement[1] = [
+            'v',
+            f"{self.tail}2",
+            f"{self.body}1",
+            f"{self.head}0",
+        ]
+        new_snake_placement[2] = ['v', 'v', 'v', 'v']
+        new_snake_placement[3] = ['v', 'v', 'v', 'v']
+        self.assertTrue(
+            np.array_equal(self.snake_placement, new_snake_placement),
+            f"{self.snake_placement} is different from {new_snake_placement}")
+
+    def test_moves_the_same_no_movement_key(self) -> None:
+        snake_placement = np.empty((4, 4), dtype=np.object_)
+        snake_placement[0] = ['v', 'v', 'v', 'v']
+        snake_placement[1] = [
+            'v', f"{self.head}0", f"{self.body}1", f"{self.tail}2"
+        ]
+        snake_placement[2] = ['v', 'v', 'v', 'v']
+        snake_placement[3] = ['v', 'v', 'v', 'v']
+        self.snake_placement = snake_placement
+        self.snake_placement = logic_controller.move_snake(
+            self.snake_placement, state.LEFT_DIRECTION, 0)[0]
+        new_snake_placement = np.empty((4, 4), dtype=np.object_)
+        new_snake_placement[0] = ['v', 'v', 'v', 'v']
+        new_snake_placement[1] = [
+            f"{self.head}0", f"{self.body}1", f"{self.tail}2", 'v'
+        ]
+        new_snake_placement[2] = ['v', 'v', 'v', 'v']
+        new_snake_placement[3] = ['v', 'v', 'v', 'v']
+        self.assertTrue(
+            np.array_equal(self.snake_placement, new_snake_placement),
+            f"{new_snake_placement} is different from {self.snake_placement}")
 
 
 class TestPlaceInitialSnake(TestCase):
@@ -27,7 +212,12 @@ class TestPlaceInitialSnake(TestCase):
         post_snake_placement = np.copy(self.snake_placement)
         self.snake_placement = logic_controller.place_initial_snake(
             self.snake_placement, choose_function)
-        post_snake_placement[position[0], position[1]] = SNAKE_INITIAL_PLACE
+        post_snake_placement[position[0],
+                             position[1]] = logic_controller.INITIAL_BODY_PLACE
+        post_snake_placement[position[0],
+                             position[1] + 1] = logic_controller.HEAD_PLACE
+        post_snake_placement[position[0], position[1] -
+                             1] = logic_controller.INITIAL_TAIL_PLACE
         self.assertTrue(
             np.array_equal(self.snake_placement, post_snake_placement),
             f"{post_snake_placement} is different from {self.snake_placement}")

@@ -12,6 +12,9 @@ DEFAULT_GENERIC_COLOR = (100, 100, 100, 255)
 _pygame_module: ModuleType
 _screen: pygame.Surface | None = None
 _clock: pygame.time.Clock | None = None
+_keys_pressed: list[int] = []
+
+clock_type = pygame.time.Clock
 
 K_UP = pygame.K_UP
 K_RIGHT = pygame.K_RIGHT
@@ -24,6 +27,10 @@ KEY_DIRECTION = {
     K_DOWN: state.BOTTOM_DIRECTION,
     K_LEFT: state.LEFT_DIRECTION,
 }
+
+
+def get_ticks() -> float:
+    return pygame.time.get_ticks()
 
 
 def init_game(pygame_module: ModuleType = pygame) -> None:
@@ -53,20 +60,39 @@ def movement_direction(previous_movement_keys: list[int],
     return direction
 
 
+def tick(fps: int) -> float:
+    global _clock
+    return _clock.tick(fps) / 1000
+
+
+def pump() -> None:
+    pygame.event.pump()
+
+
 def movement_keys() -> list[int]:
     global MOVEMENT_KEYS
-    keys_pressed = _get_keys_pressed()
-    movement_keys = [x for x in keys_pressed if x in MOVEMENT_KEYS]
+    keys_pressed = pygame.key.get_pressed()
+    movement_keys = []
+    for key in MOVEMENT_KEYS:
+        if keys_pressed[key]:
+            if key in movement_keys:
+                movement_keys.remove(key)
+            else:
+                movement_keys.append(key)
     return movement_keys
 
 
-def _get_keys_pressed() -> list[int]:
-    global _pygame_module
-    keys_pressed = []
-    for event in _pygame_module.event.get():
-        if event.type == pygame.KEYDOWN:
-            keys_pressed.append(event.key)
-    return keys_pressed
+#
+# def _get_keys_pressed() -> list[int]:
+#     global _keys_pressed
+#     global _pygame_module
+#     for event in _pygame_module.event.get():
+#         if event.type == pygame.KEYDOWN:
+#             _keys_pressed.append(event.key)
+#     for event in _pygame_module.event.get():
+#         if event.type == pygame.KEYUP:
+#             _keys_pressed.remove(event.key)
+#     return _keys_pressed
 
 
 def rect(pos_vector_top_left: tuple[float, float],

@@ -5,6 +5,17 @@ import math
 from snakext import state_types
 
 
+def coords_strstr(substring: Any,
+                  haystack: npt.NDArray[Any]) -> tuple[int, int]:
+    coords = (-1, -1)
+    for i, row in enumerate(haystack):
+        for k, val in enumerate(row):
+            if substring in val:
+                coords = i, k
+                break
+    return coords
+
+
 def vec_2d_add(vec_1: tuple[float, float],
                vec_2: tuple[float, float]) -> tuple[float, float]:
     return (vec_1[0] + vec_2[0], vec_1[1] + vec_2[1])

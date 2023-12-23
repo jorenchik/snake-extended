@@ -23,7 +23,7 @@ LEFT_DIRECTION = 4
 @dataclass
 class State:
     snake_placement: state_types.OBJECT_ND_ARRAY
-    snake_direction: int
+    movement_direction: int
 
 
 state_instance: State
