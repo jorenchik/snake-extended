@@ -3,6 +3,7 @@ import numpy as np
 from snakext.state import state
 from snakext.facades import pygame_facade
 import typing
+import random
 
 POSSIBLE_OFFSETS = {
     state.RIGHT_DIRECTION: (0, -1),
@@ -12,12 +13,20 @@ POSSIBLE_OFFSETS = {
 }
 
 STRING_2D_ARR_TYPE = np.ndarray[tuple[int, int], np.dtype[np.object_]]
-INITIAL_SNAKE_STRING = 's0'
+INITIAL_SNAKE_STRING = 'h0'
+
+
+def _choose_random(matrix: STRING_2D_ARR_TYPE) -> tuple[int, int]:
+    row_count, col_count = matrix.shape
+    random_row = random.randrange(0, row_count - 1, 1)
+    random_col = random.randrange(0, col_count - 1, 1)
+    return random_row, random_col
 
 
 def place_initial_snake(
     snake_placement: STRING_2D_ARR_TYPE,
-    choose_coordinates: typing.Callable[[STRING_2D_ARR_TYPE], tuple[int, int]]
+    choose_coordinates: typing.Callable[[STRING_2D_ARR_TYPE],
+                                        tuple[int, int]] = _choose_random
 ) -> STRING_2D_ARR_TYPE:
     initial_places = [
         el for row in snake_placement for el in row

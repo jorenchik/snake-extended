@@ -18,13 +18,14 @@ async def main_loop() -> None:
     state.init_state(playground_instance.grid_rows,
                      playground_instance.grid_cols)
     state_instance = state.state_instance
+    state_instance.snake_placement = logic_controller.place_initial_snake(
+        state_instance.snake_placement)
     movement_keys: list[int] = []
     while True:
         movement_key = pygame_facade.movement_direction(
             movement_keys, pygame_facade.movement_keys)
         state_instance.snake_placement = logic_controller.move_snake(
             state_instance.snake_placement, movement_key)
-        print(state_instance.snake_placement)
         game_view.draw_game_view(playground_instance,
                                  state_instance.snake_placement)
         await asyncio.sleep(0.5)

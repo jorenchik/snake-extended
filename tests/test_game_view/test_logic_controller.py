@@ -6,6 +6,8 @@ import numpy as np
 import pygame
 from unittest.mock import MagicMock
 
+SNAKE_INITIAL_PLACE = f"{state.SNAKE_HEAD_PLACE}0"
+
 
 class TestMoveSnake(TestCase):
 
@@ -25,7 +27,7 @@ class TestPlaceInitialSnake(TestCase):
         post_snake_placement = np.copy(self.snake_placement)
         self.snake_placement = logic_controller.place_initial_snake(
             self.snake_placement, choose_function)
-        post_snake_placement[position[0], position[1]] = 's0'
+        post_snake_placement[position[0], position[1]] = SNAKE_INITIAL_PLACE
         self.assertTrue(
             np.array_equal(self.snake_placement, post_snake_placement),
             f"{post_snake_placement} is different from {self.snake_placement}")
@@ -34,6 +36,6 @@ class TestPlaceInitialSnake(TestCase):
         choose_function = MagicMock()
         position = 1, 2
         choose_function.return_value = position
-        self.snake_placement[2, 2] = 's0'
+        self.snake_placement[2, 2] = SNAKE_INITIAL_PLACE
         self.assertRaises(ValueError, logic_controller.place_initial_snake,
                           self.snake_placement, choose_function)

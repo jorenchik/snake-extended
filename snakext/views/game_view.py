@@ -14,9 +14,9 @@ def init_game_view() -> None:
 
 
 def draw_game_view(
-        playground: playground.Playground,
-        snake_placement: np.ndarray[tuple[int, int],
-                                    np.dtype[np.str_]]) -> None:
+    playground: playground.Playground,
+    snake_placement: np.ndarray[tuple[int, int],
+                                np.dtype[np.object_]]) -> None:
     _draw_contents(playground, snake_placement)
     pygame_facade.update_display()
 
@@ -47,6 +47,7 @@ def _place_snake(
         grid: np.ndarray[tuple[int, int], np.dtype[np.object_]]) -> None:
 
     for i, row in enumerate(snake_placement):
+        print(snake_placement)
         for k, place in enumerate(row):
             if not isinstance(grid[i, k], pygame_facade.Rect):
                 raise TypeError("Grid should consist of only Rect objects")
