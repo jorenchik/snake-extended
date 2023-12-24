@@ -21,31 +21,34 @@ LEFT_DIRECTION = 4
 
 @dataclass
 class State:
-    snake_placement: state_types.OBJECT_ND_ARRAY
+    local_snake_placement: state_types.OBJECT_ND_ARRAY
+    remote_snake_placement: state_types.OBJECT_ND_ARRAY
     food_placement: state_types.OBJECT_ND_ARRAY
     movement_direction: int
     previous_snake_placement: state_types.OBJECT_ND_ARRAY
     add_do_snake: bool
+    multiplayer: bool
 
 
 state_instance: State
 
 
-def init_state(grid_rows: int, grid_cols: int) -> State:
+def init_state(grid_rows: int,
+               grid_cols: int,
+               multiplayer: bool = False) -> State:
     global state_instance
     grid_shape = (grid_rows, grid_cols)
-    element_count = grid_shape[0] * grid_shape[1]
-    snake_placement = np.empty(grid_shape, dtype=np.object_)
-    food_placement = np.empty(grid_shape, dtype=np.object_)
-    grid_contents = ['v' for x in range(element_count)]
-    math_.fill_matrix(snake_placement, grid_contents, *grid_shape)
-    math_.fill_matrix(food_placement, grid_contents, *grid_shape)
+    local_snake_placement = np.full(grid_shape, 'v', dtype=np.object_)
+    remote_snake_placement = np.full(grid_shape, 'v', dtype=np.object_)
+    food_placement = np.full(grid_shape, 'v', dtype=np.object_)
     # Choose some direction for the snake
     state_instance = State(
-        snake_placement=snake_placement,
-        previous_snake_placement=snake_placement,
+        local_snake_placement=local_snake_placement,
+        remote_snake_placement=remote_snake_placement,
+        previous_snake_placement=local_snake_placement,
         add_do_snake=False,
         food_placement=food_placement,
         movement_direction=RIGHT_DIRECTION,
+        multiplayer=multiplayer,
     )
     return state_instance

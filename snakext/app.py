@@ -15,12 +15,12 @@ async def init_app() -> None:
         playground_instance.grid_rows,
         playground_instance.grid_cols,
     )
-    state_instance.snake_placement = logic_controller.place_initial_snake(
-        state_instance.snake_placement, )
-    state_instance.previous_snake_placement = state_instance.snake_placement
+    state_instance.local_snake_placement = logic_controller.place_initial_snake(
+        state_instance.local_snake_placement, )
+    state_instance.previous_snake_placement = state_instance.local_snake_placement
     state_instance.food_placement = logic_controller.place_food(
         state_instance.food_placement,
-        state_instance.snake_placement,
+        state_instance.local_snake_placement,
     )
     await main_loop(playground_instance, state_instance)
 
@@ -66,7 +66,7 @@ def draw(
 ) -> None:
     game_view.draw_game_view(
         playground_instance,
-        state_instance.snake_placement,
+        state_instance.local_snake_placement,
         state_instance.food_placement,
     )
 
@@ -76,9 +76,9 @@ def move_snake(
     movement_key: int,
 ) -> bool:
     if game_clock.moves():
-        state_instance.previous_snake_placement = state_instance.snake_placement
-        state_instance.snake_placement, state_instance.movement_direction, movement_successful = logic_controller.move_snake(
-            state_instance.snake_placement,
+        state_instance.previous_snake_placement = state_instance.local_snake_placement
+        state_instance.local_snake_placement, state_instance.movement_direction, movement_successful = logic_controller.move_snake(
+            state_instance.local_snake_placement,
             state_instance.movement_direction,
             movement_key,
             add_to_snake=state_instance.add_do_snake,
@@ -93,13 +93,13 @@ def move_snake(
         #             state_instance.snake_placement):
         #     return False
         state_instance.food_placement, state_instance.add_do_snake = logic_controller.handle_food_collision(
-            state_instance.snake_placement,
+            state_instance.local_snake_placement,
             state_instance.food_placement,
         )
         if state_instance.add_do_snake:
             logic_controller.place_food(
                 state_instance.food_placement,
-                state_instance.snake_placement,
+                state_instance.local_snake_placement,
             )
     return True
 
