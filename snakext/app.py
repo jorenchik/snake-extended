@@ -24,8 +24,8 @@ async def init_app() -> None:
 async def main_loop(playground_instance: game_view.playground.Playground,
                     state_instance: state.State) -> None:
     movement_key = state.RIGHT_DIRECTION
-
     while True:
+        pygame_facade.handle_exit_event()
         game_clock.tick(pygame_facade)
         current_movement_keys = pygame_facade.movement_keys()
         draw(playground_instance, state_instance)

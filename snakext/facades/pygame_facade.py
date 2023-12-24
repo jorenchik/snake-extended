@@ -3,6 +3,7 @@ import pygame
 from types import ModuleType
 from typing import Callable
 from snakext.state import state
+import sys
 
 GAME_INITIALIZED_SUCCESSFULLY: int = 5
 DEFAULT_RESOLUTION: tuple[int, int] = (1280, 720)
@@ -90,6 +91,13 @@ def movement_keys() -> list[int]:
             else:
                 movement_keys.append(key)
     return movement_keys
+
+
+def handle_exit_event() -> None:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
 
 
 #
