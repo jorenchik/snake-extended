@@ -18,6 +18,10 @@ async def init_app() -> None:
     state_instance.snake_placement = logic_controller.place_initial_snake(
         state_instance.snake_placement, )
     state_instance.previous_snake_placement = state_instance.snake_placement
+    state_instance.food_placement = logic_controller.place_food(
+        state_instance.food_placement,
+        state_instance.snake_placement,
+    )
     await main_loop(playground_instance, state_instance)
 
 
@@ -77,12 +81,22 @@ def move_snake(
             state_instance.snake_placement,
             state_instance.movement_direction,
             movement_key,
+            add_to_snake=state_instance.add_do_snake,
         )
         if logic_controller.check_collision(
                 state_instance.snake_placement,
                 state_instance.previous_snake_placement,
                 only_head=True):
             return False
+        state_instance.food_placement, state_instance.add_do_snake = logic_controller.handle_food_collision(
+            state_instance.snake_placement,
+            state_instance.food_placement,
+        )
+        if state_instance.add_do_snake:
+            logic_controller.place_food(
+                state_instance.food_placement,
+                state_instance.snake_placement,
+            )
     return True
 
 

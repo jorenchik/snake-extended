@@ -27,6 +27,7 @@ class State:
     food_placement: state_types.OBJECT_ND_ARRAY
     movement_direction: int
     previous_snake_placement: state_types.OBJECT_ND_ARRAY
+    add_do_snake: bool
 
 
 state_instance: State
@@ -43,9 +44,10 @@ def init_state(grid_rows: int, grid_cols: int) -> State:
     math_.fill_arr_2d(food_placement, grid_contents, *grid_shape)
     # Choose some direction for the snake
     state_instance = State(
-        snake_placement,
-        food_placement,
-        RIGHT_DIRECTION,
-        snake_placement,
+        snake_placement=snake_placement,
+        previous_snake_placement=snake_placement,
+        add_do_snake=False,
+        food_placement=food_placement,
+        movement_direction=RIGHT_DIRECTION,
     )
     return state_instance

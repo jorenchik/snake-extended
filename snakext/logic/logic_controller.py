@@ -21,6 +21,20 @@ INITIAL_TAIL_PLACE = f"{state.SNAKE_TAIL_PLACE}2"
 COORDINATES_NOT_FOUND = (-1, -1)
 
 
+def handle_food_collision(
+    snake_placement: STRING_2D_ARR_TYPE,
+    food_placement: STRING_2D_ARR_TYPE,
+) -> tuple[STRING_2D_ARR_TYPE, bool]:
+    collision_coordinates = _search_collision(snake_placement,
+                                              food_placement,
+                                              only_head=True)
+    collided = False
+    if collision_coordinates != COORDINATES_NOT_FOUND:
+        collided = True
+        food_placement[collision_coordinates] = state.VOID_PLACE
+    return (food_placement, collided)
+
+
 def _middle_left(matrix: STRING_2D_ARR_TYPE) -> tuple[int, int]:
     row_count, col_count = matrix.shape
     position = (math.floor(row_count / 2), math.floor(col_count / 4))
@@ -45,12 +59,13 @@ def _choose_match(match_: str, matrix: STRING_2D_ARR_TYPE) -> tuple[int, int]:
     return chosen_coordinates
 
 
-def place_food(food_placement: STRING_2D_ARR_TYPE,
-               other_placement: STRING_2D_ARR_TYPE,
-               choose_coordinates: typing.Callable[[str, STRING_2D_ARR_TYPE],
-                                                   tuple[int,
-                                                         int]] = _choose_match,
-               where_to_place: str = state.VOID_PLACE) -> STRING_2D_ARR_TYPE:
+def place_food(
+    food_placement: STRING_2D_ARR_TYPE,
+    other_placement: STRING_2D_ARR_TYPE,
+    choose_coordinates: typing.Callable[[str, STRING_2D_ARR_TYPE],
+                                        tuple[int, int]] = _choose_match,
+    where_to_place: str = state.VOID_PLACE,
+) -> STRING_2D_ARR_TYPE:
     i, k = choose_coordinates(where_to_place, food_placement)
     food_placement[i, k] = state.FOOD_PLACE
     return food_placement
@@ -126,7 +141,7 @@ def _search_collision(placement1: STRING_2D_ARR_TYPE,
                       only_head: bool = False) -> tuple[int, int]:
     coordinates = COORDINATES_NOT_FOUND
     for i, row in enumerate(placement1):
-        for k, place in enumerate(placement1):
+        for k, place in enumerate(row):
             if (not only_head or placement1[i, k][0] == state.SNAKE_HEAD_PLACE
                 ) and placement1[i, k] != state.VOID_PLACE and placement2[
                     i, k] != state.VOID_PLACE:
