@@ -77,17 +77,21 @@ def move_snake(
 ) -> bool:
     if game_clock.moves():
         state_instance.previous_snake_placement = state_instance.snake_placement
-        state_instance.snake_placement, state_instance.movement_direction = logic_controller.move_snake(
+        state_instance.snake_placement, state_instance.movement_direction, movement_successful = logic_controller.move_snake(
             state_instance.snake_placement,
             state_instance.movement_direction,
             movement_key,
             add_to_snake=state_instance.add_do_snake,
         )
-        if logic_controller.check_collision(
-                state_instance.snake_placement,
-                state_instance.previous_snake_placement,
-                only_head=True):
+        if not movement_successful:
             return False
+        # if logic_controller.check_collision(
+        #         state_instance.snake_placement,
+        #         logic_controller.headless_placement(
+        #             state_instance.snake_placement),
+        #         only_head=True) and logic_controller.check_for_headless(
+        #             state_instance.snake_placement):
+        #     return False
         state_instance.food_placement, state_instance.add_do_snake = logic_controller.handle_food_collision(
             state_instance.snake_placement,
             state_instance.food_placement,

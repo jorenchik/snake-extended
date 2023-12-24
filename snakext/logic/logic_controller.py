@@ -100,17 +100,19 @@ def move_snake(
     movement_direction: int,
     movement_key: int,
     add_to_snake: bool = False,
-) -> tuple[STRING_2D_ARR_TYPE, int]:
-    head_coords = math_.coords_strstr(state.SNAKE_HEAD_PLACE, snake_placement)
-    tail_coords = math_.coords_strstr(state.SNAKE_TAIL_PLACE, snake_placement)
-    tail_place = snake_placement[tail_coords]
+) -> tuple[STRING_2D_ARR_TYPE, int, bool]:
+    new_snake_placement = np.copy(snake_placement)
+    head_coords = math_.coords_strstr(state.SNAKE_HEAD_PLACE,
+                                      new_snake_placement)
+    tail_coords = math_.coords_strstr(state.SNAKE_TAIL_PLACE,
+                                      new_snake_placement)
+    tail_place = new_snake_placement[tail_coords]
     tail_number = int(tail_place[1])
     new_tail_coords = math_.coords_strstr(
-        f"{state.SNAKE_BODY_PLACE}{tail_number - 1}", snake_placement)
-    snake_placement[head_coords] = _change_place(snake_placement[head_coords],
-                                                 state.SNAKE_BODY_PLACE,
-                                                 number=0)
-    snake_placement = _increment_snake_places(snake_placement)
+        f"{state.SNAKE_BODY_PLACE}{tail_number - 1}", new_snake_placement)
+    new_snake_placement[head_coords] = _change_place(
+        new_snake_placement[head_coords], state.SNAKE_BODY_PLACE, number=0)
+    new_snake_placement = _increment_snake_places(new_snake_placement)
     if movement_key == 0:
         movement_key = movement_direction
     movement_direction_vector = MOVEMENT_DIRECTIONS[movement_direction]
@@ -119,13 +121,34 @@ def move_snake(
         movement_direction = movement_key
     else:
         movement_vector = movement_direction_vector
-    snake_placement = _move_head(snake_placement, head_coords, movement_vector)
-    if not add_to_snake:
-        snake_placement[tail_coords] = state.VOID_PLACE
-        snake_placement[new_tail_coords] = _change_place(
-            snake_placement[new_tail_coords], state.SNAKE_TAIL_PLACE,
+
+    new_snake_placement, movement_successful = _move_head(
+        new_snake_placement, head_coords, movement_vector)
+
+    if not add_to_snake and movement_successful:
+        new_snake_placement[tail_coords] = state.VOID_PLACE
+        new_snake_placement[new_tail_coords] = _change_place(
+            new_snake_placement[new_tail_coords], state.SNAKE_TAIL_PLACE,
             tail_number)
-    return snake_placement, movement_direction
+
+    if not movement_successful:
+        new_snake_placement = snake_placement
+
+    return new_snake_placement, movement_direction, movement_successful
+
+
+def check_for_headless(snake_placement: STRING_2D_ARR_TYPE) -> bool:
+    return math_.coords_strstr(state.SNAKE_HEAD_PLACE,
+                               snake_placement) != COORDINATES_NOT_FOUND
+
+
+def headless_placement(snake_placement: STRING_2D_ARR_TYPE):
+    head_coords = math_.coords_strstr(state.SNAKE_HEAD_PLACE, snake_placement)
+    headless_placement = snake_placement
+    if head_coords != COORDINATES_NOT_FOUND:
+        headless_placement = np.copy(snake_placement)
+        headless_placement[head_coords] = state.VOID_PLACE
+    return headless_placement
 
 
 def check_collision(placement1: STRING_2D_ARR_TYPE,
@@ -165,16 +188,19 @@ def _increment_snake_places(
     return snake_placement
 
 
-def _move_head(snake_placement: STRING_2D_ARR_TYPE,
-               snake_head_coords: tuple[int, int],
-               movement_vector: tuple[int, int]) -> STRING_2D_ARR_TYPE:
+def _move_head(
+        snake_placement: STRING_2D_ARR_TYPE, snake_head_coords: tuple[int,
+                                                                      int],
+        movement_vector: tuple[int, int]) -> tuple[STRING_2D_ARR_TYPE, bool]:
     new_snake_head_coords = (snake_head_coords[0] + movement_vector[0],
                              snake_head_coords[1] + movement_vector[1])
     dim_y, dim_x = snake_placement.shape
     new_snake_head_coords = (new_snake_head_coords[0] % dim_y,
                              new_snake_head_coords[1] % dim_x)
-    snake_placement[new_snake_head_coords] = HEAD_PLACE
-    return snake_placement
+    is_occupied = snake_placement[new_snake_head_coords] != state.VOID_PLACE
+    if not is_occupied:
+        snake_placement[new_snake_head_coords] = HEAD_PLACE
+    return snake_placement, not is_occupied
 
 
 def _change_place(place: str,
