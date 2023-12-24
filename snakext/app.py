@@ -1,9 +1,9 @@
 """ Main loop that triggers the changes in the game """
 import asyncio
-from snakext.views import game_view
+from snakext.game.views import game_view
 from snakext.facades import pygame_facade
-from snakext.logic import logic_controller
-from snakext.state import state
+from snakext.game.logic import logic_controller
+from snakext.game.state import state
 from snakext.utils import game_clock
 
 

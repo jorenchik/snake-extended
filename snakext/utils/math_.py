@@ -1,8 +1,7 @@
-import numpy as np
 import numpy.typing as npt
 from typing import Any
 import math
-from snakext import state_types
+from snakext.game.state import state_types
 import random
 
 

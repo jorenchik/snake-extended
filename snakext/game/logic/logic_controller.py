@@ -1,9 +1,9 @@
 """ Calculates the game logic concerns """
 import numpy as np
 import typing
-from snakext.state import state
+from snakext.game.state import state_types
+from snakext.game.state import state
 from snakext.utils import math_
-from snakext import state_types
 
 MOVEMENT_DIRECTIONS = {
     state.RIGHT_DIRECTION: (0, 1),

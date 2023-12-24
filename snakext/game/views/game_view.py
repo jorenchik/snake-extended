@@ -1,9 +1,9 @@
 """ Represents the change of the state. """
 from types import ModuleType
-from snakext.views import playground
 from snakext.facades import pygame_facade
-from snakext.state import state
-from snakext import state_types
+from snakext.game.state import state_types
+from snakext.game.views import playground
+from snakext.game.state import state
 
 playground_instance: playground.Playground
 

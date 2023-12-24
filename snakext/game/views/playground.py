@@ -4,7 +4,7 @@ from types import ModuleType
 from dataclasses import dataclass
 from snakext.facades import pygame_facade
 from snakext.utils import math_
-from snakext import state_types
+from snakext.game.state import state_types
 
 PLAYGROUND_MARGIN = 40
 WALL_MARGIN = 0

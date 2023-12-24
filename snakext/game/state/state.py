@@ -2,8 +2,7 @@
 
 import numpy as np
 from dataclasses import dataclass
-from snakext.utils import math_
-from snakext import state_types
+from snakext.game.state import state_types
 
 VOID_PLACE = 'v'
 FOOD_PLACE = 'f'
