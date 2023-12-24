@@ -1,3 +1,4 @@
+import asyncio
 from snakext.facades import pygame_facade
 from snakext.utils import game_clock
 from snakext.game.logic import logic_controller
@@ -5,7 +6,7 @@ from snakext.game.state import state
 from snakext.game.views import game_view
 
 
-async def init_game() -> None:
+def init_game() -> None:
     pygame_facade.init_game()
     game_view.init_game_view()
     playground_instance = game_view.playground_instance
@@ -20,7 +21,7 @@ async def init_game() -> None:
         state_instance.food_placement,
         state_instance.local_snake_placement,
     )
-    await _main_game_loop(playground_instance, state_instance)
+    asyncio.run(_main_game_loop(playground_instance, state_instance))
 
 
 async def _main_game_loop(playground_instance: game_view.playground.Playground,
