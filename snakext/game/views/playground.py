@@ -3,7 +3,7 @@ import math
 from types import ModuleType
 from dataclasses import dataclass
 from snakext.facades import pygame_facade
-from snakext.utils import math_
+from snakext.utils import matrix
 from snakext.game.state import state_types
 
 PLAYGROUND_MARGIN = 40
@@ -79,7 +79,7 @@ def make_rect_grid(position_top_left: tuple[float, float],
     source_list = _rect_grid_list(rows, cols, (slot_width, slot_height),
                                   position_top_left)
     arr = np.empty((rows, cols), dtype=pygame_facade.Rect)
-    arr = math_.fill_matrix(arr, source_list, rows, cols)
+    arr = matrix.fill_matrix(arr, source_list, rows, cols)
     return arr
 
 
@@ -121,9 +121,9 @@ def _add_margin_to_frame(
     position_top_left: tuple[float, float], frame_dimensions: tuple[float,
                                                                     float]
 ) -> tuple[tuple[float, float], tuple[float, float]]:
-    position_top_left = math_.vec_2d_add(position_top_left,
-                                         (FRAME_MARGIN_X, FRAME_MARGIN_Y))
-    frame_dimensions = math_.vec_2d_add(
+    position_top_left = matrix.vec_2d_add(position_top_left,
+                                          (FRAME_MARGIN_X, FRAME_MARGIN_Y))
+    frame_dimensions = matrix.vec_2d_add(
         frame_dimensions, (-FRAME_MARGIN_X * 2, -FRAME_MARGIN_Y * 2))
     return (position_top_left, frame_dimensions)
 
@@ -153,9 +153,9 @@ def _grid_dimensions(frame_dimensions: tuple[float, float],
 def _grid_element(idx: int, rows: int, cols: int, slot_width: float,
                   slot_height: float, start_position: tuple[float, float],
                   rect_dimensions: tuple[float, float]) -> pygame_facade.Rect:
-    (y_pos, x_pos) = math_.matrix_position_of_index(idx, cols)
+    (y_pos, x_pos) = matrix.matrix_position_of_index(idx, cols)
     rect_position = (x_pos * slot_width + 1, y_pos * slot_height + 1)
-    rect_position = math_.vec_2d_add(rect_position, start_position)
+    rect_position = matrix.vec_2d_add(rect_position, start_position)
     return pygame_facade.rect(
         rect_position,
         rect_dimensions,
@@ -170,12 +170,12 @@ def _rect_grid_list(
 ) -> list[pygame_facade.Rect]:
     source_list: list[pygame_facade.Rect] = []
     for i in range(0, rows * cols):
-        (y_pos, x_pos) = math_.matrix_position_of_index(i, cols)
+        (y_pos, x_pos) = matrix.matrix_position_of_index(i, cols)
         rect_normal_position = (x_pos, y_pos)
-        rect_dimensions = math_.vec_2d_add(slot_dimensions, (-1, -1))
-        rect_position = math_.vec_2d_multiply(rect_normal_position,
-                                              slot_dimensions)
-        rect_position = math_.vec_2d_add(rect_position, starting_position)
+        rect_dimensions = matrix.vec_2d_add(slot_dimensions, (-1, -1))
+        rect_position = matrix.vec_2d_multiply(rect_normal_position,
+                                               slot_dimensions)
+        rect_position = matrix.vec_2d_add(rect_position, starting_position)
         rect = pygame_facade.rect(rect_position, rect_dimensions)
         source_list.append(rect)
     return source_list
@@ -186,7 +186,7 @@ def _make_right_wall(playground_position: tuple[float, float],
                      wall_width: float) -> pygame_facade.Rect:
     position_vector: tuple[float,
                            float] = (playground_dimensions[0] - wall_width, 0)
-    position_vector = math_.vec_2d_add(position_vector, playground_position)
+    position_vector = matrix.vec_2d_add(position_vector, playground_position)
     rect_dimensions = (wall_width, playground_dimensions[1])
     wall_rect = pygame_facade.rect(position_vector, rect_dimensions)
     return wall_rect
@@ -197,7 +197,7 @@ def _make_top_wall(playground_position: tuple[float, float],
                    wall_width: float) -> pygame_facade.Rect:
     position_vector: tuple[float, float] = (0, 0)
     rect_dimensions = (playground_dimensions[0], wall_width)
-    position_vector = math_.vec_2d_add(position_vector, playground_position)
+    position_vector = matrix.vec_2d_add(position_vector, playground_position)
     wall_rect = pygame_facade.rect(position_vector, rect_dimensions)
     return wall_rect
 
@@ -207,7 +207,7 @@ def _make_left_wall(playground_position: tuple[float, float],
                     wall_width: float) -> pygame_facade.Rect:
     position_vector: tuple[float, float] = (0, 0)
     rect_dimensions = (wall_width, playground_dimensions[1])
-    position_vector = math_.vec_2d_add(position_vector, playground_position)
+    position_vector = matrix.vec_2d_add(position_vector, playground_position)
     wall_rect = pygame_facade.rect(position_vector, rect_dimensions)
     return wall_rect
 
@@ -218,6 +218,6 @@ def _make_bottom_wall(playground_position: tuple[float, float],
     position_vector: tuple[float,
                            float] = (0, playground_dimensions[1] - wall_width)
     rect_dimensions = (playground_dimensions[0] - wall_width, wall_width)
-    position_vector = math_.vec_2d_add(position_vector, playground_position)
+    position_vector = matrix.vec_2d_add(position_vector, playground_position)
     wall_rect = pygame_facade.rect(position_vector, rect_dimensions)
     return wall_rect

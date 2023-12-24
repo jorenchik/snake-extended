@@ -3,7 +3,7 @@ import numpy as np
 import typing
 from snakext.game.state import state_types
 from snakext.game.state import state
-from snakext.utils import math_
+from snakext.utils import matrix
 
 MOVEMENT_DIRECTIONS = {
     state.RIGHT_DIRECTION: (0, 1),
@@ -37,7 +37,7 @@ def place_food(
     other_placement: state_types.OBJECT_ND_ARRAY,
     choose_coordinates: typing.Callable[
         [str, state_types.OBJECT_ND_ARRAY],
-        tuple[int, int]] = math_.choose_random_match,
+        tuple[int, int]] = matrix.choose_random_match,
     where_to_place: str = state.VOID_PLACE,
 ) -> state_types.OBJECT_ND_ARRAY:
     i, k = choose_coordinates(where_to_place, food_placement)
@@ -48,7 +48,7 @@ def place_food(
 def place_initial_snake(
     snake_placement: state_types.OBJECT_ND_ARRAY,
     choose_coordinates: typing.Callable[[state_types.OBJECT_ND_ARRAY], tuple[
-        int, int]] = math_.middle_left_element_position
+        int, int]] = matrix.middle_left_element_position
 ) -> state_types.OBJECT_ND_ARRAY:
     initial_places = [
         el for row in snake_placement for el in row if el == HEAD_PLACE
@@ -77,14 +77,14 @@ def move_snake(
 ) -> tuple[state_types.OBJECT_ND_ARRAY, int, bool]:
     new_snake_placement = np.copy(snake_placement)
 
-    tail_coords = math_.matrix_substring_element_coordinates(
+    tail_coords = matrix.matrix_substring_element_coordinates(
         state.SNAKE_TAIL_PLACE, new_snake_placement)
     tail_place = new_snake_placement[tail_coords]
     tail_number = int(tail_place[1:])
-    new_tail_coords = math_.matrix_substring_element_coordinates(
+    new_tail_coords = matrix.matrix_substring_element_coordinates(
         f"{state.SNAKE_BODY_PLACE}{tail_number - 1}", new_snake_placement)
 
-    head_coords = math_.matrix_substring_element_coordinates(
+    head_coords = matrix.matrix_substring_element_coordinates(
         state.SNAKE_HEAD_PLACE, new_snake_placement)
     new_snake_placement[head_coords] = _change_place(
         new_snake_placement[head_coords], state.SNAKE_BODY_PLACE, number=0)
@@ -125,14 +125,14 @@ def _movement_attributes(
 
 
 def check_for_headless(snake_placement: state_types.OBJECT_ND_ARRAY) -> bool:
-    return math_.matrix_substring_element_coordinates(
+    return matrix.matrix_substring_element_coordinates(
         state.SNAKE_HEAD_PLACE, snake_placement) != COORDINATES_NOT_FOUND
 
 
 def headless_placement(
     snake_placement: state_types.OBJECT_ND_ARRAY
 ) -> state_types.OBJECT_ND_ARRAY:
-    head_coords = math_.matrix_substring_element_coordinates(
+    head_coords = matrix.matrix_substring_element_coordinates(
         state.SNAKE_HEAD_PLACE, snake_placement)
     headless_placement = snake_placement
     if head_coords != COORDINATES_NOT_FOUND:
