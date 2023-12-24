@@ -102,12 +102,13 @@ def move_snake(
     add_to_snake: bool = False,
 ) -> tuple[STRING_2D_ARR_TYPE, int, bool]:
     new_snake_placement = np.copy(snake_placement)
+
     head_coords = math_.coords_strstr(state.SNAKE_HEAD_PLACE,
                                       new_snake_placement)
     tail_coords = math_.coords_strstr(state.SNAKE_TAIL_PLACE,
                                       new_snake_placement)
     tail_place = new_snake_placement[tail_coords]
-    tail_number = int(tail_place[1])
+    tail_number = int(tail_place[1:])
     new_tail_coords = math_.coords_strstr(
         f"{state.SNAKE_BODY_PLACE}{tail_number - 1}", new_snake_placement)
     new_snake_placement[head_coords] = _change_place(
