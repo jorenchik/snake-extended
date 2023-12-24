@@ -77,26 +77,23 @@ def move_snake(
 ) -> tuple[state_types.OBJECT_ND_ARRAY, int, bool]:
     new_snake_placement = np.copy(snake_placement)
 
-    head_coords = math_.matrix_substring_element_coordinates(
-        state.SNAKE_HEAD_PLACE, new_snake_placement)
     tail_coords = math_.matrix_substring_element_coordinates(
         state.SNAKE_TAIL_PLACE, new_snake_placement)
     tail_place = new_snake_placement[tail_coords]
     tail_number = int(tail_place[1:])
     new_tail_coords = math_.matrix_substring_element_coordinates(
         f"{state.SNAKE_BODY_PLACE}{tail_number - 1}", new_snake_placement)
+
+    head_coords = math_.matrix_substring_element_coordinates(
+        state.SNAKE_HEAD_PLACE, new_snake_placement)
     new_snake_placement[head_coords] = _change_place(
         new_snake_placement[head_coords], state.SNAKE_BODY_PLACE, number=0)
-    new_snake_placement = _increment_snake_places(new_snake_placement)
-    if movement_key == 0:
-        movement_key = movement_direction
-    movement_direction_vector = MOVEMENT_DIRECTIONS[movement_direction]
-    movement_vector = MOVEMENT_DIRECTIONS[movement_key]
-    if not _is_opposite(movement_direction_vector, movement_vector):
-        movement_direction = movement_key
-    else:
-        movement_vector = movement_direction_vector
+    movement_key, movement_direction, movement_vector = _movement_attributes(
+        movement_direction,
+        movement_key,
+    )
 
+    new_snake_placement = _increment_snake_places(new_snake_placement)
     new_snake_placement, movement_successful = _move_head(
         new_snake_placement, head_coords, movement_vector)
 
@@ -110,6 +107,21 @@ def move_snake(
         new_snake_placement = snake_placement
 
     return new_snake_placement, movement_direction, movement_successful
+
+
+def _movement_attributes(
+    movement_direction: int,
+    movement_key: int,
+) -> tuple[int, int, tuple[int, int]]:
+    if movement_key == 0:
+        movement_key = movement_direction
+    movement_direction_vector = MOVEMENT_DIRECTIONS[movement_direction]
+    movement_vector = MOVEMENT_DIRECTIONS[movement_key]
+    if not _is_opposite(movement_direction_vector, movement_vector):
+        movement_direction = movement_key
+    else:
+        movement_vector = movement_direction_vector
+    return movement_key, movement_direction, movement_vector
 
 
 def check_for_headless(snake_placement: state_types.OBJECT_ND_ARRAY) -> bool:
