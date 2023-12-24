@@ -1,9 +1,9 @@
 """ Offers simpler interface for pygame functionality. """
 import pygame
+import sys
 from types import ModuleType
 from typing import Callable
 from snakext.state import state
-import sys
 
 GAME_INITIALIZED_SUCCESSFULLY: int = 5
 DEFAULT_RESOLUTION: tuple[int, int] = (1280, 720)

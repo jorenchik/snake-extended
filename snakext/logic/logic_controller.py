@@ -1,11 +1,9 @@
 """ Calculates the game logic concerns """
 import numpy as np
-from snakext.state import state
-from snakext.facades import pygame_facade
 import typing
-import random
+from snakext.state import state
 from snakext.utils import math_
-import math
+from snakext import state_types
 
 MOVEMENT_DIRECTIONS = {
     state.RIGHT_DIRECTION: (0, 1),
@@ -14,7 +12,6 @@ MOVEMENT_DIRECTIONS = {
     state.BOTTOM_DIRECTION: (1, 0)
 }
 
-STRING_2D_ARR_TYPE = np.ndarray[tuple[int, int], np.dtype[np.object_]]
 HEAD_PLACE = f"{state.SNAKE_HEAD_PLACE}0"
 INITIAL_BODY_PLACE = f"{state.SNAKE_BODY_PLACE}1"
 INITIAL_TAIL_PLACE = f"{state.SNAKE_TAIL_PLACE}2"
@@ -22,9 +19,9 @@ COORDINATES_NOT_FOUND = (-1, -1)
 
 
 def handle_food_collision(
-    snake_placement: STRING_2D_ARR_TYPE,
-    food_placement: STRING_2D_ARR_TYPE,
-) -> tuple[STRING_2D_ARR_TYPE, bool]:
+    snake_placement: state_types.OBJECT_ND_ARRAY,
+    food_placement: state_types.OBJECT_ND_ARRAY,
+) -> tuple[state_types.OBJECT_ND_ARRAY, bool]:
     collision_coordinates = _search_collision(snake_placement,
                                               food_placement,
                                               only_head=True)
@@ -35,47 +32,24 @@ def handle_food_collision(
     return (food_placement, collided)
 
 
-def _middle_left(matrix: STRING_2D_ARR_TYPE) -> tuple[int, int]:
-    row_count, col_count = matrix.shape
-    position = (math.floor(row_count / 2), math.floor(col_count / 4))
-    return position
-
-
-def _choose_random(matrix: STRING_2D_ARR_TYPE) -> tuple[int, int]:
-    row_count, col_count = matrix.shape
-    random_row = random.randrange(0, row_count - 1, 1)
-    random_col = random.randrange(0, col_count - 1, 1)
-    return random_row, random_col
-
-
-def _choose_match(match_: str, matrix: STRING_2D_ARR_TYPE) -> tuple[int, int]:
-
-    available_coords = []
-    for i, row in enumerate(matrix):
-        for k, place in enumerate(row):
-            if place == match_:
-                available_coords.append((i, k))
-    chosen_coordinates = random.choice(available_coords)
-    return chosen_coordinates
-
-
 def place_food(
-    food_placement: STRING_2D_ARR_TYPE,
-    other_placement: STRING_2D_ARR_TYPE,
-    choose_coordinates: typing.Callable[[str, STRING_2D_ARR_TYPE],
-                                        tuple[int, int]] = _choose_match,
+    food_placement: state_types.OBJECT_ND_ARRAY,
+    other_placement: state_types.OBJECT_ND_ARRAY,
+    choose_coordinates: typing.Callable[
+        [str, state_types.OBJECT_ND_ARRAY],
+        tuple[int, int]] = math_.choose_random_match,
     where_to_place: str = state.VOID_PLACE,
-) -> STRING_2D_ARR_TYPE:
+) -> state_types.OBJECT_ND_ARRAY:
     i, k = choose_coordinates(where_to_place, food_placement)
     food_placement[i, k] = state.FOOD_PLACE
     return food_placement
 
 
 def place_initial_snake(
-    snake_placement: STRING_2D_ARR_TYPE,
-    choose_coordinates: typing.Callable[[STRING_2D_ARR_TYPE],
-                                        tuple[int, int]] = _middle_left
-) -> STRING_2D_ARR_TYPE:
+    snake_placement: state_types.OBJECT_ND_ARRAY,
+    choose_coordinates: typing.Callable[[state_types.OBJECT_ND_ARRAY], tuple[
+        int, int]] = math_.middle_left_element_position
+) -> state_types.OBJECT_ND_ARRAY:
     initial_places = [
         el for row in snake_placement for el in row if el == HEAD_PLACE
     ]
@@ -96,20 +70,20 @@ def _increment_place(place: str) -> str:
 
 
 def move_snake(
-    snake_placement: STRING_2D_ARR_TYPE,
+    snake_placement: state_types.OBJECT_ND_ARRAY,
     movement_direction: int,
     movement_key: int,
     add_to_snake: bool = False,
-) -> tuple[STRING_2D_ARR_TYPE, int, bool]:
+) -> tuple[state_types.OBJECT_ND_ARRAY, int, bool]:
     new_snake_placement = np.copy(snake_placement)
 
-    head_coords = math_.coords_strstr(state.SNAKE_HEAD_PLACE,
-                                      new_snake_placement)
-    tail_coords = math_.coords_strstr(state.SNAKE_TAIL_PLACE,
-                                      new_snake_placement)
+    head_coords = math_.matrix_substring_element_coordinates(
+        state.SNAKE_HEAD_PLACE, new_snake_placement)
+    tail_coords = math_.matrix_substring_element_coordinates(
+        state.SNAKE_TAIL_PLACE, new_snake_placement)
     tail_place = new_snake_placement[tail_coords]
     tail_number = int(tail_place[1:])
-    new_tail_coords = math_.coords_strstr(
+    new_tail_coords = math_.matrix_substring_element_coordinates(
         f"{state.SNAKE_BODY_PLACE}{tail_number - 1}", new_snake_placement)
     new_snake_placement[head_coords] = _change_place(
         new_snake_placement[head_coords], state.SNAKE_BODY_PLACE, number=0)
@@ -138,13 +112,16 @@ def move_snake(
     return new_snake_placement, movement_direction, movement_successful
 
 
-def check_for_headless(snake_placement: STRING_2D_ARR_TYPE) -> bool:
-    return math_.coords_strstr(state.SNAKE_HEAD_PLACE,
-                               snake_placement) != COORDINATES_NOT_FOUND
+def check_for_headless(snake_placement: state_types.OBJECT_ND_ARRAY) -> bool:
+    return math_.matrix_substring_element_coordinates(
+        state.SNAKE_HEAD_PLACE, snake_placement) != COORDINATES_NOT_FOUND
 
 
-def headless_placement(snake_placement: STRING_2D_ARR_TYPE):
-    head_coords = math_.coords_strstr(state.SNAKE_HEAD_PLACE, snake_placement)
+def headless_placement(
+    snake_placement: state_types.OBJECT_ND_ARRAY
+) -> state_types.OBJECT_ND_ARRAY:
+    head_coords = math_.matrix_substring_element_coordinates(
+        state.SNAKE_HEAD_PLACE, snake_placement)
     headless_placement = snake_placement
     if head_coords != COORDINATES_NOT_FOUND:
         headless_placement = np.copy(snake_placement)
@@ -152,16 +129,16 @@ def headless_placement(snake_placement: STRING_2D_ARR_TYPE):
     return headless_placement
 
 
-def check_collision(placement1: STRING_2D_ARR_TYPE,
-                    placement2: STRING_2D_ARR_TYPE,
+def check_collision(placement1: state_types.OBJECT_ND_ARRAY,
+                    placement2: state_types.OBJECT_ND_ARRAY,
                     only_head: bool = True) -> bool:
     collision_found = _search_collision(
         placement1, placement2, only_head=only_head) != COORDINATES_NOT_FOUND
     return collision_found
 
 
-def _search_collision(placement1: STRING_2D_ARR_TYPE,
-                      placement2: STRING_2D_ARR_TYPE,
+def _search_collision(placement1: state_types.OBJECT_ND_ARRAY,
+                      placement2: state_types.OBJECT_ND_ARRAY,
                       only_head: bool = False) -> tuple[int, int]:
     coordinates = COORDINATES_NOT_FOUND
     for i, row in enumerate(placement1):
@@ -180,7 +157,8 @@ def _is_opposite(vec1: tuple[int, int], vec2: tuple[int, int]) -> bool:
 
 
 def _increment_snake_places(
-        snake_placement: STRING_2D_ARR_TYPE) -> STRING_2D_ARR_TYPE:
+    snake_placement: state_types.OBJECT_ND_ARRAY
+) -> state_types.OBJECT_ND_ARRAY:
     initial_shape = snake_placement.shape
     snake_placement = np.array([
         _increment_place(place) if place != state.VOID_PLACE else place
@@ -190,9 +168,10 @@ def _increment_snake_places(
 
 
 def _move_head(
-        snake_placement: STRING_2D_ARR_TYPE, snake_head_coords: tuple[int,
-                                                                      int],
-        movement_vector: tuple[int, int]) -> tuple[STRING_2D_ARR_TYPE, bool]:
+    snake_placement: state_types.OBJECT_ND_ARRAY,
+    snake_head_coords: tuple[int, int],
+    movement_vector: tuple[int,
+                           int]) -> tuple[state_types.OBJECT_ND_ARRAY, bool]:
     new_snake_head_coords = (snake_head_coords[0] + movement_vector[0],
                              snake_head_coords[1] + movement_vector[1])
     dim_y, dim_x = snake_placement.shape

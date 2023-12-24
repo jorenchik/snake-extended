@@ -1,9 +1,9 @@
 import numpy as np
-from snakext.facades import pygame_facade
-from snakext.utils import math_
 import math
 from types import ModuleType
 from dataclasses import dataclass
+from snakext.facades import pygame_facade
+from snakext.utils import math_
 from snakext import state_types
 
 PLAYGROUND_MARGIN = 40
@@ -78,8 +78,8 @@ def make_rect_grid(position_top_left: tuple[float, float],
     (slot_width, slot_height, rows) = _grid_dimensions(frame_dimensions, cols)
     source_list = _rect_grid_list(rows, cols, (slot_width, slot_height),
                                   position_top_left)
-    arr = math_.arr_2d(rows, cols, dtype=pygame_facade.Rect)
-    arr = math_.fill_arr_2d(arr, source_list, rows, cols)
+    arr = np.empty((rows, cols), dtype=pygame_facade.Rect)
+    arr = math_.fill_matrix(arr, source_list, rows, cols)
     return arr
 
 
@@ -153,7 +153,7 @@ def _grid_dimensions(frame_dimensions: tuple[float, float],
 def _grid_element(idx: int, rows: int, cols: int, slot_width: float,
                   slot_height: float, start_position: tuple[float, float],
                   rect_dimensions: tuple[float, float]) -> pygame_facade.Rect:
-    (y_pos, x_pos) = math_.arr_2d_index(idx, cols)
+    (y_pos, x_pos) = math_.matrix_position_of_index(idx, cols)
     rect_position = (x_pos * slot_width + 1, y_pos * slot_height + 1)
     rect_position = math_.vec_2d_add(rect_position, start_position)
     return pygame_facade.rect(
@@ -170,7 +170,7 @@ def _rect_grid_list(
 ) -> list[pygame_facade.Rect]:
     source_list: list[pygame_facade.Rect] = []
     for i in range(0, rows * cols):
-        (y_pos, x_pos) = math_.arr_2d_index(i, cols)
+        (y_pos, x_pos) = math_.matrix_position_of_index(i, cols)
         rect_normal_position = (x_pos, y_pos)
         rect_dimensions = math_.vec_2d_add(slot_dimensions, (-1, -1))
         rect_position = math_.vec_2d_multiply(rect_normal_position,

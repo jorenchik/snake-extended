@@ -1,7 +1,6 @@
 """ Contains all the state of the game. """
 
 import numpy as np
-import numpy.typing as npt
 from dataclasses import dataclass
 from snakext.utils import math_
 from snakext import state_types
@@ -14,7 +13,6 @@ SNAKE_HEAD_PLACE = 'h'
 SNAKE_PLACES: list[str] = [
     SNAKE_TAIL_PLACE, SNAKE_BODY_PLACE, SNAKE_HEAD_PLACE
 ]
-
 TOP_DIRECTION = 1
 BOTTOM_DIRECTION = 2
 RIGHT_DIRECTION = 3
@@ -40,8 +38,8 @@ def init_state(grid_rows: int, grid_cols: int) -> State:
     snake_placement = np.empty(grid_shape, dtype=np.object_)
     food_placement = np.empty(grid_shape, dtype=np.object_)
     grid_contents = ['v' for x in range(element_count)]
-    math_.fill_arr_2d(snake_placement, grid_contents, *grid_shape)
-    math_.fill_arr_2d(food_placement, grid_contents, *grid_shape)
+    math_.fill_matrix(snake_placement, grid_contents, *grid_shape)
+    math_.fill_matrix(food_placement, grid_contents, *grid_shape)
     # Choose some direction for the snake
     state_instance = State(
         snake_placement=snake_placement,
