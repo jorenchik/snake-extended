@@ -5,16 +5,7 @@ import sys
 import time
 from typing import Awaitable, Callable
 from snakext.game.state import state
-
-argv = sys.argv
-if len(argv) > 2:
-    SERVER_PORT = int(argv[1])
-else:
-    SERVER_PORT = 54321
-if len(argv) > 2:
-    REMOTE_PORT = int(argv[2])
-else:
-    REMOTE_PORT = 54322
+from snakext.utils import arg_parser
 
 PINGS_PER_SECOND = 2
 PING_PERIOD = 1 / PINGS_PER_SECOND
@@ -31,7 +22,7 @@ async def recieve_state(remote_state: state.TransmittedState) -> None:
         await asyncio.sleep(1)
         try:
             async with websockets.connect(
-                    f"ws://localhost:{REMOTE_PORT}") as websocket:
+                    f"ws://localhost:{arg_parser.REMOTE_PORT}") as websocket:
                 while True:
                     time_difference = time.time() - current_time
                     if time_difference < PING_PERIOD:
@@ -82,6 +73,6 @@ def start_server(local_transmitted_state: state.TransmittedState) -> None:
     start_server = websockets.serve(
         _handle_request,
         "localhost",
-        SERVER_PORT,
+        arg_parser.LOCAL_PORT,
     )
     asyncio.get_event_loop().run_until_complete(start_server)
