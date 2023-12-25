@@ -64,13 +64,15 @@ async def _main_game_loop(
             pygame_facade.movement_keys,
             movement_key,
         )
-        if not _handle_logic_tick(
-                playground_instance,
-                state_instance,
-                movement_key,
-                local_transmitted_state_instance,
-                remote_transmitted_state_instance,
-        ):
+        if (remote_transmitted_state_instance.time_last_communicated != 0.0 and
+                local_transmitted_state_instance.time_last_communicated != 0.0
+                and not _handle_logic_tick(
+                    playground_instance,
+                    state_instance,
+                    movement_key,
+                    local_transmitted_state_instance,
+                    remote_transmitted_state_instance,
+                )):
             break
 
         pygame_facade.pump()
