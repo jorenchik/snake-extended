@@ -26,7 +26,6 @@ remote_ping_count = 0
 
 async def recieve_state(remote_state: state.TransmittedState) -> None:
     global current_time
-    global remote_ping_count
     global local_ping_count
     while True:
         await asyncio.sleep(1)
@@ -44,13 +43,14 @@ async def recieve_state(remote_state: state.TransmittedState) -> None:
                     await websocket.send(request)
                     response = await websocket.recv()
                     print(f"Server response: {response!r}")
+                    remote_state.time_last_communicated = time.time()
         except Exception as e:
             print(e)
 
 
 async def _respond_to_message_with_transmission_state(
     websocket: websockets.WebSocketServerProtocol,
-    transmission_state: state.TransmittedState,
+    local_transmission_state: state.TransmittedState,
 ) -> None:
     global remote_ping_count
     async for message in websocket:
@@ -58,6 +58,7 @@ async def _respond_to_message_with_transmission_state(
         response = f"Hello from server #{remote_ping_count}, time: {time.time()}"
         remote_ping_count += 1
         await websocket.send(response)
+        local_transmission_state.time_last_communicated = time.time()
 
 
 def _create_request_handler(

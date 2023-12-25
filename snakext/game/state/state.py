@@ -21,6 +21,7 @@ LEFT_DIRECTION = 4
 @dataclass
 class TransmittedState:
     snake_placement: list[tuple[int, int]]
+    time_last_communicated: float
 
 
 @dataclass
@@ -61,4 +62,4 @@ def init_state(grid_rows: int,
 
 
 def init_transmitted_state() -> TransmittedState:
-    return TransmittedState(snake_placement=[])
+    return TransmittedState(snake_placement=[], time_last_communicated=0.0)
