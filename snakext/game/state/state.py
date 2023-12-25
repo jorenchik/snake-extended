@@ -19,6 +19,11 @@ LEFT_DIRECTION = 4
 
 
 @dataclass
+class TransmittedState:
+    snake_placement: list[tuple[int, int]]
+
+
+@dataclass
 class State:
     local_snake_placement: state_types.OBJECT_ND_ARRAY
     remote_snake_placement: state_types.OBJECT_ND_ARRAY
@@ -29,7 +34,9 @@ class State:
     multiplayer: bool
 
 
-state_instance: State
+state_instance: State | None
+local_transmitted_state_instance: TransmittedState | None
+remote_transmitted_state_instance: TransmittedState | None
 
 
 def init_state(grid_rows: int,
@@ -51,3 +58,7 @@ def init_state(grid_rows: int,
         multiplayer=multiplayer,
     )
     return state_instance
+
+
+def init_transmitted_state() -> TransmittedState:
+    return TransmittedState(snake_placement=[])

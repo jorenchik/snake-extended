@@ -3,10 +3,13 @@ from snakext.facades import pygame_facade
 from snakext.utils import game_clock
 from snakext.game.logic import logic_controller
 from snakext.game.state import state
-from snakext.game.views import game_view
+from snakext.game.views import game_view, playground
 
 
-def init_game() -> None:
+def init_game() -> tuple[
+    playground.Playground,
+    state.State,
+]:
     pygame_facade.init_game()
     game_view.init_game_view()
     playground_instance = game_view.playground_instance
@@ -15,17 +18,41 @@ def init_game() -> None:
         playground_instance.grid_cols,
     )
     state_instance.local_snake_placement = logic_controller.place_initial_snake(
-        state_instance.local_snake_placement, )
+        state_instance.local_snake_placement)
     state_instance.previous_snake_placement = state_instance.local_snake_placement
     state_instance.food_placement = logic_controller.place_food(
         state_instance.food_placement,
         state_instance.local_snake_placement,
     )
-    asyncio.run(_main_game_loop(playground_instance, state_instance))
+    return (
+        playground_instance,
+        state_instance,
+    )
 
 
-async def _main_game_loop(playground_instance: game_view.playground.Playground,
-                          state_instance: state.State) -> None:
+def run_game(
+    local_transmitted_state_instance: state.TransmittedState,
+    remote_transmitted_state_instance: state.TransmittedState,
+) -> None:
+    (
+        playground_instance,
+        state.state_instance,
+    ) = init_game()
+    asyncio.run(
+        _main_game_loop(
+            playground_instance,
+            state.state_instance,
+            local_transmitted_state_instance,
+            remote_transmitted_state_instance,
+        ))
+
+
+async def _main_game_loop(
+    playground_instance: game_view.playground.Playground,
+    state_instance: state.State,
+    local_transmitted_state_instance: state.TransmittedState,
+    remote_transmitted_state_instance: state.TransmittedState,
+) -> None:
     movement_key = state.RIGHT_DIRECTION
     while True:
         pygame_facade.handle_exit_event()
@@ -41,8 +68,11 @@ async def _main_game_loop(playground_instance: game_view.playground.Playground,
                 playground_instance,
                 state_instance,
                 movement_key,
+                local_transmitted_state_instance,
+                remote_transmitted_state_instance,
         ):
             break
+
         pygame_facade.pump()
 
 
@@ -50,6 +80,8 @@ def _handle_logic_tick(
     playground_instance: game_view.playground.Playground,
     state_instance: state.State,
     movement_key: int,
+    local_transmitted_state_instance: state.TransmittedState,
+    remote_transmitted_state_instance: state.TransmittedState,
 ) -> bool:
     if game_clock.is_logic_tick(pygame_facade):
         moved_successfully = _move_snake(state_instance, movement_key)

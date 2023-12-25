@@ -11,9 +11,9 @@ WALL_MARGIN = 0
 WALL_WIDTH = 25
 FRAME_MARGIN_X = 5
 FRAME_MARGIN_Y = 5
+GRID_COLUMN_COUNT = 30
 
 playground_position = (PLAYGROUND_MARGIN, PLAYGROUND_MARGIN)
-grid_column_count = 30
 snake_color = pygame_facade.Color(50, 50, 50, 255)
 food_color = pygame_facade.Color(50, 205, 50, 255)
 plauground_background_color = pygame_facade.Color(129, 143, 180, 255)
@@ -44,9 +44,9 @@ def init_playground() -> Playground:
     grid_dimensions = _playground_grid_dimensions(dimensions, WALL_WIDTH)
     grid_position = _playground_grid_position(playground_position)
     snake_grid: state_types.OBJECT_ND_ARRAY = make_rect_grid(
-        grid_position, grid_dimensions, grid_column_count)
+        grid_position, grid_dimensions, GRID_COLUMN_COUNT)
     food_grid: state_types.OBJECT_ND_ARRAY = make_rect_grid(
-        grid_position, grid_dimensions, grid_column_count)
+        grid_position, grid_dimensions, GRID_COLUMN_COUNT)
     (grid_rows, grid_cols) = snake_grid.shape
     try:
         playground_instance = Playground(
