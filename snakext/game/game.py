@@ -61,10 +61,6 @@ async def _main_game_loop(
         pygame_facade.handle_exit_event()
         game_clock.tick(pygame_facade)
         current_movement_keys = pygame_facade.movement_keys()
-        state_instance.remote_snake_placement = logic_controller.placement_from_array(
-            remote_transmitted_state_instance.snake_placement,
-            (playground_instance.grid_rows, playground_instance.grid_cols),
-        )
         _draw_game_view(playground_instance, state_instance)
         movement_key = pygame_facade.movement_key(
             current_movement_keys,
@@ -98,6 +94,14 @@ def _handle_logic_tick(
             return False
         local_transmitted_state_instance.snake_placement = logic_controller.placement_array(
             state_instance.local_snake_placement, )
+        state_instance.remote_snake_placement = logic_controller.placement_from_array(
+            remote_transmitted_state_instance.snake_placement,
+            (playground_instance.grid_rows, playground_instance.grid_cols),
+        )
+        if logic_controller.check_remote_snake_collision(
+                state_instance.local_snake_placement,
+                state_instance.remote_snake_placement):
+            return False
         game_clock.logic_tick(pygame_facade)
     return True
 
@@ -132,10 +136,6 @@ def _move_snake(
             state_instance.local_snake_placement,
             state_instance.food_placement,
         )
-        if logic_controller.check_remote_snake_collision(
-                state_instance.local_snake_placement,
-                state_instance.remote_snake_placement):
-            return False
         if state_instance.add_do_snake:
             logic_controller.place_food(
                 state_instance.food_placement,
