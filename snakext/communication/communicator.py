@@ -67,16 +67,15 @@ def _create_request_handler(
     return _handler
 
 
-def start_client(remote_transmitted_state: state.TransmittedState) -> None:
-    asyncio.get_event_loop().run_until_complete(
-        recieve_state(remote_transmitted_state))
+async def start_client(remote_transmitted_state: state.TransmittedState):
+    return await recieve_state(remote_transmitted_state)
 
 
-def start_server(local_transmitted_state: state.TransmittedState) -> None:
+async def start_server(local_transmitted_state: state.TransmittedState):
     _handle_request = _create_request_handler(local_transmitted_state)
-    start_server = websockets.serve(
+    start_server = await websockets.serve(
         _handle_request,
         "localhost",
         arg_parser.LOCAL_PORT,
     )
-    asyncio.get_event_loop().run_until_complete(start_server)
+    return start_server

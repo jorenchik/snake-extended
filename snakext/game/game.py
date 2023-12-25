@@ -36,6 +36,7 @@ def init_game() -> tuple[
 def run_game(
     local_transmitted_state_instance: state.TransmittedState,
     remote_transmitted_state_instance: state.TransmittedState,
+    future: asyncio.Future[int],
 ) -> None:
     (
         playground_instance,
@@ -47,6 +48,7 @@ def run_game(
             state.state_instance,
             local_transmitted_state_instance,
             remote_transmitted_state_instance,
+            future,
         ))
 
 
@@ -55,6 +57,7 @@ async def _main_game_loop(
     state_instance: state.State,
     local_transmitted_state_instance: state.TransmittedState,
     remote_transmitted_state_instance: state.TransmittedState,
+    future: asyncio.Future[int],
 ) -> None:
     movement_key = state.RIGHT_DIRECTION
     while True:
@@ -76,6 +79,7 @@ async def _main_game_loop(
                     local_transmitted_state_instance,
                     remote_transmitted_state_instance,
                 )):
+            future.set_result(0)
             break
 
         pygame_facade.pump()
