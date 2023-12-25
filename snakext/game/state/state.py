@@ -23,6 +23,7 @@ LEFT_DIRECTION = 4
 class TransmittedState:
     snake_placement: list[tuple[int, int]]
     time_last_communicated: float
+    stop: bool
 
     def to_json(self) -> str:
         dict_ = dataclasses.asdict(self)
@@ -35,6 +36,7 @@ class TransmittedState:
         transmitted_state = TransmittedState(
             snake_placement=dict_["snake_placement"],
             time_last_communicated=dict_["time_last_communicated"],
+            stop=dict_["stop"],
         )
         return transmitted_state
 
@@ -77,4 +79,8 @@ def init_state(grid_rows: int,
 
 
 def init_transmitted_state() -> TransmittedState:
-    return TransmittedState(snake_placement=[], time_last_communicated=0.0)
+    return TransmittedState(
+        snake_placement=[],
+        time_last_communicated=0.0,
+        stop=False,
+    )

@@ -50,6 +50,8 @@ def run_game(
             remote_transmitted_state_instance,
             future,
         ))
+    if not future.done():
+        future.set_result(0)
 
 
 async def _main_game_loop(
@@ -85,8 +87,15 @@ async def _main_game_loop(
                     local_transmitted_state_instance,
                     remote_transmitted_state_instance,
                 )):
-            future.set_result(0)
             break
+
+        if future.done():
+            break
+
+        if logic_controller.check_remote_snake_collision(
+                state_instance.local_snake_placement,
+                state_instance.remote_snake_placement):
+            local_transmitted_state_instance.stop = True
 
         pygame_facade.pump()
 
@@ -101,10 +110,6 @@ def _handle_logic_tick(
     if game_clock.is_logic_tick(pygame_facade):
         moved_successfully = _move_snake(state_instance, movement_key)
         if not moved_successfully:
-            return False
-        if logic_controller.check_remote_snake_collision(
-                state_instance.local_snake_placement,
-                state_instance.remote_snake_placement):
             return False
         game_clock.logic_tick(pygame_facade)
     return True

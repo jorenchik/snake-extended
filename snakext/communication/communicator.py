@@ -26,7 +26,7 @@ async def recieve_state(remote_state: state.TransmittedState, future) -> None:
                     f"ws://localhost:{arg_parser.REMOTE_PORT}") as websocket:
                 while True:
                     if future.done():
-                        websocket.close_connection()
+                        await websocket.close_connection()
                         return
                     time_difference = time.time() - current_time
                     if time_difference < PING_PERIOD:
@@ -42,6 +42,10 @@ async def recieve_state(remote_state: state.TransmittedState, future) -> None:
                         initial_load)
                     remote_state.snake_placement = received_remote_state.snake_placement
                     remote_state.time_last_communicated = time.time()
+                    if received_remote_state.stop:
+                        future.set_result(0)
+                        await websocket.close_connection()
+                        return
         except Exception as e:
             print(e)
 
@@ -54,13 +58,17 @@ async def _respond_to_message_with_transmission_state(
     global remote_ping_count
     async for message in websocket:
         if future.done():
-            websocket.close_connection()
+            await websocket.close_connection()
             return
         # response = "resp"
         response = json.dumps(local_transmission_state.to_json())
         remote_ping_count += 1
         await websocket.send(response)
         local_transmission_state.time_last_communicated = time.time()
+        if local_transmission_state.stop:
+            future.set_result(0)
+            await websocket.close_connection()
+            return
 
 
 def _create_request_handler(
