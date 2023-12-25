@@ -61,6 +61,10 @@ async def _main_game_loop(
         pygame_facade.handle_exit_event()
         game_clock.tick(pygame_facade)
         current_movement_keys = pygame_facade.movement_keys()
+        state_instance.remote_snake_placement = logic_controller.placement_from_array(
+            remote_transmitted_state_instance.snake_placement,
+            (playground_instance.grid_rows, playground_instance.grid_cols),
+        )
         _draw_game_view(playground_instance, state_instance)
         movement_key = pygame_facade.movement_key(
             current_movement_keys,
@@ -92,6 +96,8 @@ def _handle_logic_tick(
         moved_successfully = _move_snake(state_instance, movement_key)
         if not moved_successfully:
             return False
+        local_transmitted_state_instance.snake_placement = logic_controller.placement_array(
+            state_instance.local_snake_placement, )
         game_clock.logic_tick(pygame_facade)
     return True
 
@@ -103,6 +109,7 @@ def _draw_game_view(
     game_view.draw_game_view(
         playground_instance,
         state_instance.local_snake_placement,
+        state_instance.remote_snake_placement,
         state_instance.food_placement,
     )
 

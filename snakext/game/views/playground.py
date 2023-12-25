@@ -30,6 +30,7 @@ class Playground:
     internal_playground_dimensions: tuple[float, float]
     internal_playground_position: tuple[float, float]
     snake_grid: state_types.OBJECT_ND_ARRAY
+    remote_snake_grid: state_types.OBJECT_ND_ARRAY
     grid_rows: int
     grid_cols: int
     wall_color: pygame_facade.Color
@@ -45,23 +46,35 @@ def init_playground() -> Playground:
     grid_position = _playground_grid_position(playground_position)
     snake_grid: state_types.OBJECT_ND_ARRAY = make_rect_grid(
         grid_position, grid_dimensions, GRID_COLUMN_COUNT)
+    remote_snake_grid: state_types.OBJECT_ND_ARRAY = make_rect_grid(
+        grid_position, grid_dimensions, GRID_COLUMN_COUNT)
     food_grid: state_types.OBJECT_ND_ARRAY = make_rect_grid(
         grid_position, grid_dimensions, GRID_COLUMN_COUNT)
     (grid_rows, grid_cols) = snake_grid.shape
     try:
         playground_instance = Playground(
-            playground_position,
-            (pygame_facade.screen_width() - 2 * playground_position[0],
-             pygame_facade.screen_height() - 2 * playground_position[1]),
-            WALL_WIDTH, make_walls(playground_position, dimensions,
-                                   WALL_WIDTH),
-            (dimensions[0] - 2 * WALL_WIDTH, dimensions[1] - 2 * WALL_WIDTH),
-            (playground_position[0] + WALL_WIDTH,
-             playground_position[1] + WALL_WIDTH), snake_grid, grid_rows,
-            grid_cols, pygame_facade.create_color(wall_color),
-            pygame_facade.create_color(plauground_background_color),
-            pygame_facade.create_color(snake_color), food_grid,
-            pygame_facade.create_color(food_color))
+            position=playground_position,
+            dimensions=(pygame_facade.screen_width() -
+                        2 * playground_position[0],
+                        pygame_facade.screen_height() -
+                        2 * playground_position[1]),
+            wall_width=WALL_WIDTH,
+            walls=make_walls(playground_position, dimensions, WALL_WIDTH),
+            internal_playground_dimensions=(dimensions[0] - 2 * WALL_WIDTH,
+                                            dimensions[1] - 2 * WALL_WIDTH),
+            internal_playground_position=(playground_position[0] + WALL_WIDTH,
+                                          playground_position[1] + WALL_WIDTH),
+            snake_grid=snake_grid,
+            remote_snake_grid=remote_snake_grid,
+            grid_rows=grid_rows,
+            grid_cols=grid_cols,
+            wall_color=pygame_facade.create_color(wall_color),
+            background_color=pygame_facade.create_color(
+                plauground_background_color),
+            snake_color=pygame_facade.create_color(snake_color),
+            food_grid=food_grid,
+            food_color=pygame_facade.create_color(food_color),
+        )
     except pygame_facade.error as e:
         raise e
     except TypeError as e:

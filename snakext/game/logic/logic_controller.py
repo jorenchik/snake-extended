@@ -45,6 +45,28 @@ def place_food(
     return food_placement
 
 
+def placement_array(
+        placement: state_types.OBJECT_ND_ARRAY) -> list[tuple[int, int]]:
+    placement_arr: list[tuple[int, int]] = []
+    for i, row in enumerate(placement):
+        for k, place in enumerate(row):
+            if place != state.VOID_PLACE:
+                placement_arr.append((i, k))
+    return placement_arr
+
+
+def placement_from_array(
+    placement_arr: list[tuple[int, int]],
+    shape: tuple[int, int],
+) -> state_types.OBJECT_ND_ARRAY:
+    placement = np.full(shape, state.VOID_PLACE, dtype=np.object_)
+    for i, row in enumerate(placement):
+        for k, place in enumerate(row):
+            if [i, k] in placement_arr:
+                placement[i, k] = f"{state.SNAKE_BODY_PLACE}0"
+    return placement
+
+
 def place_initial_snake(
     snake_placement: state_types.OBJECT_ND_ARRAY,
     choose_coordinates: typing.Callable[[state_types.OBJECT_ND_ARRAY], tuple[

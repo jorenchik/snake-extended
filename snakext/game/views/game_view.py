@@ -16,9 +16,11 @@ def init_game_view() -> None:
 def draw_game_view(
     playground: playground.Playground,
     snake_placement: state_types.OBJECT_ND_ARRAY,
+    remote_snake_placement: state_types.OBJECT_ND_ARRAY,
     food_placement: state_types.OBJECT_ND_ARRAY,
 ) -> None:
-    _draw_contents(playground, snake_placement, food_placement)
+    _draw_contents(playground, snake_placement, food_placement,
+                   remote_snake_placement)
     pygame_facade.update_display()
 
 
@@ -26,6 +28,7 @@ def _draw_contents(
     playground: playground.Playground,
     snake_placement: state_types.OBJECT_ND_ARRAY,
     food_placement: state_types.OBJECT_ND_ARRAY,
+    remote_snake_placement: state_types.OBJECT_ND_ARRAY,
 ) -> None:
     pygame_facade.fill_background_with_color(playground.background_color)
     _draw_walls(playground)
@@ -33,6 +36,8 @@ def _draw_contents(
                 playground.food_grid)
     _place_snake(pygame_facade, playground, snake_placement,
                  playground.snake_grid)
+    _place_snake(pygame_facade, playground, remote_snake_placement,
+                 playground.remote_snake_grid)
 
 
 def _draw_walls(playground: playground.Playground) -> None:

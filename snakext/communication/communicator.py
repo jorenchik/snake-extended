@@ -3,11 +3,12 @@ import websockets
 import asyncio
 import sys
 import time
+import json
 from typing import Awaitable, Callable
 from snakext.game.state import state
 from snakext.utils import arg_parser
 
-PINGS_PER_SECOND = 2
+PINGS_PER_SECOND = 10
 PING_PERIOD = 1 / PINGS_PER_SECOND
 
 current_time = 0.0
@@ -33,7 +34,10 @@ async def recieve_state(remote_state: state.TransmittedState) -> None:
                     current_time = time.time()
                     await websocket.send(request)
                     response = await websocket.recv()
-                    print(f"Server response: {response!r}")
+                    initial_load = json.loads(response)
+                    received_remote_state = state.TransmittedState.from_json(
+                        initial_load)
+                    remote_state.snake_placement = received_remote_state.snake_placement
                     remote_state.time_last_communicated = time.time()
         except Exception as e:
             print(e)
@@ -45,8 +49,8 @@ async def _respond_to_message_with_transmission_state(
 ) -> None:
     global remote_ping_count
     async for message in websocket:
-        print(message)
-        response = f"Hello from server #{remote_ping_count}, time: {time.time()}"
+        # response = "resp"
+        response = json.dumps(local_transmission_state.to_json())
         remote_ping_count += 1
         await websocket.send(response)
         local_transmission_state.time_last_communicated = time.time()
