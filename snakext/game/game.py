@@ -1,6 +1,6 @@
 import asyncio
 from snakext.facades import pygame_facade
-from snakext.utils import game_clock
+from snakext.utils import game_clock, matrix, arg_parser
 from snakext.game.logic import logic_controller
 from snakext.game.state import state
 from snakext.game.views import game_view, playground
@@ -17,8 +17,11 @@ def init_game() -> tuple[
         playground_instance.grid_rows,
         playground_instance.grid_cols,
     )
+    snake_choose_function = matrix.middle_left_element_position if arg_parser.IS_HOST else matrix.middle_right_element_position
     state_instance.local_snake_placement = logic_controller.place_initial_snake(
-        state_instance.local_snake_placement)
+        state_instance.local_snake_placement,
+        choose_coordinates=snake_choose_function,
+    )
     state_instance.previous_snake_placement = state_instance.local_snake_placement
     state_instance.food_placement = logic_controller.place_food(
         state_instance.food_placement,

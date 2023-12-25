@@ -59,3 +59,10 @@ def middle_left_element_position(
     row_count, col_count = matrix.shape
     position = (math.floor(row_count / 2), math.floor(col_count / 4))
     return position
+
+
+def middle_right_element_position(
+        matrix: state_types.OBJECT_ND_ARRAY) -> tuple[int, int]:
+    row_count, col_count = matrix.shape
+    position = (math.floor(row_count / 2), math.floor(col_count / 4) * 3)
+    return position
