@@ -2,6 +2,7 @@
 import numpy as np
 import typing
 from snakext.game.state import state_types
+from snakext.utils import game_clock
 from snakext.game.state import state
 from snakext.utils import matrix
 
@@ -179,6 +180,33 @@ def check_collision(placement1: state_types.OBJECT_ND_ARRAY,
     collision_found = _search_collision(
         placement1, placement2, only_head=only_head) != COORDINATES_NOT_FOUND
     return collision_found
+
+
+def handle_snake_movement(
+    state_instance: state.State,
+    movement_key: int,
+) -> bool:
+    if game_clock.moves():
+        state_instance.previous_snake_placement = state_instance.local_snake_placement
+        (state_instance.local_snake_placement,
+         state_instance.movement_direction, movement_successful) = move_snake(
+             state_instance.local_snake_placement,
+             state_instance.movement_direction,
+             movement_key,
+             add_to_snake=state_instance.add_do_snake,
+         )
+        if not movement_successful:
+            return False
+        state_instance.food_placement, state_instance.add_do_snake = handle_food_collision(
+            state_instance.local_snake_placement,
+            state_instance.food_placement,
+        )
+        if state_instance.add_do_snake:
+            place_food(
+                state_instance.food_placement,
+                state_instance.local_snake_placement,
+            )
+    return True
 
 
 def _search_collision(placement1: state_types.OBJECT_ND_ARRAY,
