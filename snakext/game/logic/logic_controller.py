@@ -32,6 +32,16 @@ def handle_food_collision(
     return (food_placement, collided)
 
 
+def check_remote_snake_collision(
+    local_snake_placement: state_types.OBJECT_ND_ARRAY,
+    remote_snake_placement: state_types.OBJECT_ND_ARRAY,
+) -> bool:
+    collision_coordinates = _search_collision(local_snake_placement,
+                                              remote_snake_placement,
+                                              only_head=False)
+    return collision_coordinates != COORDINATES_NOT_FOUND
+
+
 def place_food(
     food_placement: state_types.OBJECT_ND_ARRAY,
     other_placement: state_types.OBJECT_ND_ARRAY,

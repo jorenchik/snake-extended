@@ -132,6 +132,10 @@ def _move_snake(
             state_instance.local_snake_placement,
             state_instance.food_placement,
         )
+        if logic_controller.check_remote_snake_collision(
+                state_instance.local_snake_placement,
+                state_instance.remote_snake_placement):
+            return False
         if state_instance.add_do_snake:
             logic_controller.place_food(
                 state_instance.food_placement,
