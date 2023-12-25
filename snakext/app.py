@@ -21,9 +21,11 @@ def main() -> None:
     game_thread.start()
     loop = asyncio.get_event_loop()
     start_server = communicator.start_server(
-        local_transmitted_state=state.local_transmitted_state_instance, )
+        local_transmitted_state=state.local_transmitted_state_instance,
+        future=game_future)
     start_client = communicator.start_client(
-        remote_transmitted_state=state.remote_transmitted_state_instance, )
+        remote_transmitted_state=state.remote_transmitted_state_instance,
+        future=game_future)
     loop.create_task(start_server)
     loop.create_task(start_client)
     asyncio.get_event_loop().run_until_complete(game_future)
