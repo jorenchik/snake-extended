@@ -13,6 +13,7 @@ NOT_CONNECTED_MESSAGE = "Connection failed. Trying again..."
 PINGS_PER_SECOND = 10
 PING_PERIOD = 1 / PINGS_PER_SECOND
 PING_WAIT_PERIOD = 0.02
+CONNECTION_ATTEMPT_PERIOD = 1
 
 current_time = 0.0
 local_ping_count = 0
@@ -44,7 +45,7 @@ async def _receive_state(
     future: asyncio.Future[int],
 ) -> None:
     while True:
-        await asyncio.sleep(1)
+        await asyncio.sleep(CONNECTION_ATTEMPT_PERIOD)
         try:
             async with websockets.connect(
                     f"ws://localhost:{arg_parser.REMOTE_PORT}") as websocket:
