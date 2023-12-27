@@ -8,6 +8,8 @@ from typing import Awaitable, Callable
 from snakext.game.state import state
 from snakext.utils import arg_parser
 
+NOT_CONNECTED_MESSAGE = "Connection failed. Trying again..."
+
 PINGS_PER_SECOND = 10
 PING_PERIOD = 1 / PINGS_PER_SECOND
 
@@ -46,8 +48,8 @@ async def recieve_state(remote_state: state.TransmittedState, future) -> None:
                         future.set_result(0)
                         await websocket.close_connection()
                         return
-        except Exception as e:
-            print(e)
+        except OSError:
+            print(NOT_CONNECTED_MESSAGE)
 
 
 async def _respond_to_message_with_transmission_state(
