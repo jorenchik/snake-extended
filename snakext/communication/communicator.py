@@ -15,6 +15,9 @@ PING_PERIOD = 1 / PINGS_PER_SECOND
 PING_WAIT_PERIOD = 0.02
 CONNECTION_ATTEMPT_PERIOD = 1
 
+handshake_sent = False
+time_received_handshake = 0
+
 current_time = 0.0
 local_ping_count = 0
 remote_ping_count = 0
@@ -22,9 +25,11 @@ remote_ping_count = 0
 
 async def start_client(
     remote_transmitted_state: state.TransmittedState,
+    local_transmitted_state: state.TransmittedState,
     future: asyncio.Future[int],
 ) -> None:
-    return await _receive_state(remote_transmitted_state, future)
+    return await _receive_state(remote_transmitted_state,
+                                local_transmitted_state, future)
 
 
 async def start_server(
@@ -34,24 +39,30 @@ async def start_server(
     _handle_request = _create_request_handler(local_transmitted_state, future)
     start_server = await websockets.serve(
         _handle_request,
-        "localhost",
-        arg_parser.LOCAL_PORT,
+        arg_parser.REMOTE_SERVER_IP,
+        arg_parser.LOCAL_SERVER_PORT,
     )
     return start_server
 
 
 async def _receive_state(
     remote_state: state.TransmittedState,
+    local_state: state.TransmittedState,
     future: asyncio.Future[int],
 ) -> None:
     while True:
         await asyncio.sleep(CONNECTION_ATTEMPT_PERIOD)
         try:
             async with websockets.connect(
-                    f"ws://localhost:{arg_parser.REMOTE_PORT}") as websocket:
+                    f"ws://{arg_parser.REMOTE_SERVER_IP}:{arg_parser.REMOTE_SERVER_PORT}"
+            ) as websocket:
                 print(CONNECTED_MESSAGE)
-                await _communicate_remote_state(websocket, remote_state,
-                                                future)
+                await _communicate_remote_state(
+                    websocket,
+                    remote_state,
+                    local_state,
+                    future,
+                )
         except OSError:
             print(NOT_CONNECTED_MESSAGE)
 
@@ -73,14 +84,19 @@ async def _respond_to_message_with_transmission_state(
     local_transmission_state: state.TransmittedState,
     future: asyncio.Future[int],
 ) -> None:
-    global remote_ping_count
+    global remote_ping_count, handshake_sent
     async for message in websocket:
         if future.done():
             await websocket.close_connection()
             return
+        local_transmission_state.time_sent = time.time()
+        local_transmission_state.is_handshake = True if not handshake_sent else False
         response = json.dumps(local_transmission_state.to_json())
         remote_ping_count += 1
         await websocket.send(response)
+        if not handshake_sent:
+            handshake_sent = True
+            local_transmission_state.sent_handshake = time.time()
         local_transmission_state.time_last_communicated = time.time()
         if local_transmission_state.stop:
             future.set_result(0)
@@ -105,11 +121,16 @@ def _register_ping() -> tuple[int, float]:
 
 
 def _update_remote_state(
-        response: str | bytes,
-        remote_state: state.TransmittedState) -> state.TransmittedState:
+    response: str | bytes,
+    remote_state: state.TransmittedState,
+    local_state: state.TransmittedState,
+) -> state.TransmittedState:
     initial_load = json.loads(response)
     received_remote_state = state.TransmittedState.from_json(initial_load)
     remote_state.snake_placement = received_remote_state.snake_placement
+    remote_state.sent_handshake = received_remote_state.sent_handshake
+    if received_remote_state.is_handshake:
+        local_state.received_handshake = time.time()
     remote_state.time_last_communicated = time.time()
     return received_remote_state
 
@@ -117,10 +138,10 @@ def _update_remote_state(
 async def _communicate_remote_state(
     websocket: websockets.WebSocketClientProtocol,
     remote_state: state.TransmittedState,
+    local_state: state.TransmittedState,
     future: asyncio.Future[int],
 ) -> None:
-    global current_time
-    global local_ping_count
+    global current_time, local_ping_count
     while True:
         if future.done():
             await websocket.close_connection()
@@ -132,7 +153,11 @@ async def _communicate_remote_state(
                     time: {current_time}"""
         await websocket.send(request)
         response = await websocket.recv()
-        received_remote_state = _update_remote_state(response, remote_state)
+        received_remote_state = _update_remote_state(
+            response,
+            remote_state,
+            local_state,
+        )
         if received_remote_state.stop:
             future.set_result(0)
             await websocket.close_connection()

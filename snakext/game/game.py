@@ -6,9 +6,12 @@ from snakext.game.state import state
 from snakext.game.views import game_view, playground
 
 
-def init_game() -> tuple[
-    playground.Playground,
-    state.State,
+async def init_game(
+    local_communication_state: state.TransmittedState,
+    remote_communication_state: state.TransmittedState,
+) -> tuple[
+        playground.Playground,
+        state.State,
 ]:
     pygame_facade.init_game()
     game_view.init_game_view()
@@ -17,20 +20,43 @@ def init_game() -> tuple[
         playground_instance.grid_rows,
         playground_instance.grid_cols,
     )
-    if arg_parser.IS_HOST:
-        snake_choose_function = matrix.middle_left_element_position
-    else:
-        snake_choose_function = matrix.middle_right_element_position
-    state_instance.local_snake_placement = logic_controller.place_initial_snake(
-        state_instance.local_snake_placement,
-        choose_coordinates=snake_choose_function,
+    await setup_initial_placement(
+        state_instance=state.state_instance,
+        local_communication_state=local_communication_state,
+        remote_communication_state=remote_communication_state,
     )
+    return playground_instance, state_instance
+
+
+async def setup_initial_placement(
+    state_instance: state.State,
+    local_communication_state: state.TransmittedState,
+    remote_communication_state: state.TransmittedState,
+) -> None:
+    if state_instance.multiplayer:
+        while True:
+            await asyncio.sleep(0.1)
+            if state.is_handshake_done(
+                    local_communication_state,
+                    remote_communication_state,
+            ):
+                if state.is_host(
+                        local_communication_state,
+                        remote_communication_state,
+                ):
+                    snake_choose_function = matrix.middle_left_element_position
+                else:
+                    snake_choose_function = matrix.middle_right_element_position
+                state_instance.local_snake_placement = logic_controller.place_initial_snake(
+                    state_instance.local_snake_placement,
+                    choose_coordinates=snake_choose_function,
+                )
+                break
     state_instance.previous_snake_placement = state_instance.local_snake_placement
     state_instance.food_placement = logic_controller.place_food(
         state_instance.food_placement,
         state_instance.local_snake_placement,
     )
-    return playground_instance, state_instance
 
 
 def run_game(
@@ -38,7 +64,11 @@ def run_game(
     remote_communication_state: state.TransmittedState,
     future: asyncio.Future[int],
 ) -> None:
-    playground_instance, state.state_instance = init_game()
+    playground_instance, state.state_instance = asyncio.run(
+        init_game(
+            local_communication_state,
+            remote_communication_state,
+        ))
     asyncio.run(
         _main_game_loop(
             playground_instance=playground_instance,
