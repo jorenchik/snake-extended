@@ -14,14 +14,13 @@ async def init_game(
         state.State,
 ]:
     pygame_facade.init_game()
-    game_view.init_game_view()
-    playground_instance = game_view.playground_instance
-    state_instance = state.init_state(
+    playground_instance = playground.get_playground()
+    state_instance = state.get_game_state(
         playground_instance.grid_rows,
         playground_instance.grid_cols,
     )
     await setup_initial_placement(
-        state_instance=state.state_instance,
+        state_instance=state_instance,
         local_communication_state=local_communication_state,
         remote_communication_state=remote_communication_state,
     )

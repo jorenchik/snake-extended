@@ -5,13 +5,6 @@ from snakext.game.state import state_types
 from snakext.game.views import playground
 from snakext.game.state import state
 
-playground_instance: playground.Playground
-
-
-def init_game_view() -> None:
-    global playground_instance
-    playground_instance = playground.init_playground()
-
 
 def draw_game_view(
     playground: playground.Playground,

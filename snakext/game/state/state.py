@@ -63,9 +63,9 @@ class State:
     is_handshake_done: bool
 
 
-state_instance: State | None
-local_transmitted_state_instance: TransmittedState | None
-remote_transmitted_state_instance: TransmittedState | None
+state_instance: State | None = None
+local_transmitted_state_instance: TransmittedState | None = None
+remote_transmitted_state_instance: TransmittedState | None = None
 
 
 def is_handshake_done(
@@ -84,9 +84,32 @@ def is_host(
     return local_state.sent_handshake > remote_state.sent_handshake
 
 
-def init_state(grid_rows: int,
-               grid_cols: int,
-               multiplayer: bool = False) -> State:
+def get_game_state(rows: int, cols: int) -> State:
+    global state_instance
+    if state_instance is None:
+        state_instance = _init_state(rows, cols, arg_parser.MULTIPLAYER)
+    return state_instance
+
+
+def get_local_transmitted_state() -> TransmittedState:
+    global local_transmitted_state_instance
+    if local_transmitted_state_instance is None:
+        local_transmitted_state_instance = _init_transmitted_state()
+    return local_transmitted_state_instance
+
+
+def get_remote_transmitted_state() -> TransmittedState:
+    global remote_transmitted_state_instance
+    if remote_transmitted_state_instance is None:
+        remote_transmitted_state_instance = _init_transmitted_state()
+    return remote_transmitted_state_instance
+
+
+def _init_state(
+    grid_rows: int,
+    grid_cols: int,
+    multiplayer: bool = False,
+) -> State:
     global state_instance
     grid_shape = (grid_rows, grid_cols)
     local_snake_placement = np.full(grid_shape, 'v', dtype=np.object_)
@@ -107,7 +130,7 @@ def init_state(grid_rows: int,
     return state_instance
 
 
-def init_transmitted_state() -> TransmittedState:
+def _init_transmitted_state() -> TransmittedState:
     return TransmittedState(
         snake_placement=[],
         time_sent=0.0,

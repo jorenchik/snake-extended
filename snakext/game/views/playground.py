@@ -40,15 +40,25 @@ class Playground:
     food_color: pygame_facade.Color
 
 
-def init_playground() -> Playground:
+playground_instance: Playground | None = None
+
+
+def get_playground() -> Playground:
+    global playground_instance
+    if playground_instance is None:
+        playground_instance = _init_playground()
+    return playground_instance
+
+
+def _init_playground() -> Playground:
     dimensions = _playground_dimensions(pygame_facade, playground_position)
     grid_dimensions = _playground_grid_dimensions(dimensions, WALL_WIDTH)
     grid_position = _playground_grid_position(playground_position)
-    snake_grid: state_types.OBJECT_ND_ARRAY = make_rect_grid(
+    snake_grid: state_types.OBJECT_ND_ARRAY = _make_rect_grid(
         grid_position, grid_dimensions, GRID_COLUMN_COUNT)
-    remote_snake_grid: state_types.OBJECT_ND_ARRAY = make_rect_grid(
+    remote_snake_grid: state_types.OBJECT_ND_ARRAY = _make_rect_grid(
         grid_position, grid_dimensions, GRID_COLUMN_COUNT)
-    food_grid: state_types.OBJECT_ND_ARRAY = make_rect_grid(
+    food_grid: state_types.OBJECT_ND_ARRAY = _make_rect_grid(
         grid_position, grid_dimensions, GRID_COLUMN_COUNT)
     (grid_rows, grid_cols) = snake_grid.shape
     try:
@@ -59,7 +69,7 @@ def init_playground() -> Playground:
                         pygame_facade.screen_height() -
                         2 * playground_position[1]),
             wall_width=WALL_WIDTH,
-            walls=make_walls(playground_position, dimensions, WALL_WIDTH),
+            walls=_make_walls(playground_position, dimensions, WALL_WIDTH),
             internal_playground_dimensions=(dimensions[0] - 2 * WALL_WIDTH,
                                             dimensions[1] - 2 * WALL_WIDTH),
             internal_playground_position=(playground_position[0] + WALL_WIDTH,
@@ -82,9 +92,9 @@ def init_playground() -> Playground:
     return playground_instance
 
 
-def make_rect_grid(position_top_left: tuple[float, float],
-                   frame_dimensions: tuple[float, float],
-                   cols: int) -> state_types.OBJECT_ND_ARRAY:
+def _make_rect_grid(position_top_left: tuple[float, float],
+                    frame_dimensions: tuple[float, float],
+                    cols: int) -> state_types.OBJECT_ND_ARRAY:
     (position_top_left,
      frame_dimensions) = _add_margin_to_frame(position_top_left,
                                               frame_dimensions)
@@ -96,9 +106,9 @@ def make_rect_grid(position_top_left: tuple[float, float],
     return arr
 
 
-def make_walls(playground_position: tuple[float, float],
-               playground_dimensions: tuple[float, float],
-               wall_width: float) -> list[pygame_facade.Rect]:
+def _make_walls(playground_position: tuple[float, float],
+                playground_dimensions: tuple[float, float],
+                wall_width: float) -> list[pygame_facade.Rect]:
     walls = [
         _make_left_wall(playground_position, playground_dimensions,
                         wall_width),
@@ -141,7 +151,7 @@ def _add_margin_to_frame(
     return (position_top_left, frame_dimensions)
 
 
-def make_playground_rect(
+def _make_playground_rect(
         playground_position_top_left: tuple[float,
                                             float]) -> pygame_facade.Rect:
     playground_width = pygame_facade.screen_width(
