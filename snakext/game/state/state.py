@@ -1,4 +1,5 @@
-""" Contains all the state of the game. """
+""" Contains all the state of the game and P2P communication
+state related to it. """
 from __future__ import annotations
 import numpy as np
 import dataclasses

@@ -1,4 +1,8 @@
-""" Communicates with other peer for multiplayer. """
+""" 
+Communicates with other peers for multiplayer in a gaming environment. This module 
+contains functions and coroutines for setting up and handling server-client 
+communications using WebSockets, enabling real-time interaction in a multiplayer game.
+"""
 import websockets
 import asyncio
 import time
@@ -27,6 +31,19 @@ def make_server_task(
     future: asyncio.Future[int],
     local_transmitted_state_instance: state.TransmittedState,
 ) -> Coroutine[Any, Any, websockets.WebSocketServer]:
+    """
+    Creates a coroutine to start a WebSocket server for the game.
+
+    Args:
+        future (asyncio.Future[int]): A future object representing the game's completion.
+        local_transmitted_state_instance (state.TransmittedState): The game state to be transmitted locally.
+
+    Returns:
+        Coroutine[Any, Any, websockets.WebSocketServer]: A coroutine that, when awaited, starts the WebSocket server.
+
+    Raises:
+        ValueError: If the local communication state is not initialized.
+    """
     if not state.local_transmitted_state_instance:
         raise ValueError("Local communication state is not initialized")
     start_server_task = _start_server(
@@ -40,6 +57,20 @@ def make_client_task(
     local_transmitted_state_instance: state.TransmittedState,
     remote_transmitted_state_instance: state.TransmittedState,
 ) -> Coroutine[Any, Any, None]:
+    """
+    Creates a coroutine to start a WebSocket client for the game.
+
+    Args:
+        future (asyncio.Future[int]): A future object representing the game's completion.
+        local_transmitted_state_instance (state.TransmittedState): The game state to be transmitted locally.
+        remote_transmitted_state_instance (state.TransmittedState): The game state to be received from a remote source.
+
+    Returns:
+        Coroutine[Any, Any, None]: A coroutine that, when awaited, starts the WebSocket client.
+
+    Raises:
+        ValueError: If either the local or remote communication state is not initialized.
+    """
     if not state.local_transmitted_state_instance:
         raise ValueError("Local communication state is not initialized")
     if not state.remote_transmitted_state_instance:
@@ -56,6 +87,20 @@ async def _start_client(
     local_transmitted_state: state.TransmittedState,
     future: asyncio.Future[int],
 ) -> None:
+    """
+    Starts the client for real-time communication in the multiplayer game.
+
+    This coroutine continuously attempts to connect to the server and, upon success, 
+    engages in communication to exchange game states.
+
+    Args:
+        remote_transmitted_state (state.TransmittedState): The state object for the remote game.
+        local_transmitted_state (state.TransmittedState): The state object for the local game.
+        future (asyncio.Future[int]): A future object representing the game's completion status.
+
+    Returns:
+        None
+    """
     return await _receive_state(remote_transmitted_state,
                                 local_transmitted_state, future)
 
@@ -64,6 +109,18 @@ async def _start_server(
     local_transmitted_state: state.TransmittedState,
     future: asyncio.Future[int],
 ) -> websockets.WebSocketServer:
+    """
+    Initializes and starts the WebSocket server for the multiplayer game.
+
+    This coroutine sets up the server to listen for incoming connections and handle requests.
+
+    Args:
+        local_transmitted_state (state.TransmittedState): The local game state to be transmitted.
+        future (asyncio.Future[int]): A future object representing the game's completion status.
+
+    Returns:
+        websockets.WebSocketServer: The WebSocket server instance.
+    """
     _handle_request = _create_request_handler(local_transmitted_state, future)
     start_server = await websockets.serve(
         _handle_request,
@@ -78,6 +135,20 @@ async def _receive_state(
     local_state: state.TransmittedState,
     future: asyncio.Future[int],
 ) -> None:
+    """
+    Manages the reception of game state updates from the remote client.
+
+    This coroutine is part of the client task, continuously attempting to connect to the server
+    and receiving updates on the game state.
+
+    Args:
+        remote_state (state.TransmittedState): The remote game state instance.
+        local_state (state.TransmittedState): The local game state instance.
+        future (asyncio.Future[int]): A future object representing the game's completion status.
+
+    Returns:
+        None
+    """
     while True:
         await asyncio.sleep(CONNECTION_ATTEMPT_PERIOD)
         try:
@@ -99,7 +170,16 @@ def _create_request_handler(
     transmission_state: state.TransmittedState,
     future: asyncio.Future[int],
 ) -> Callable[[websockets.WebSocketServerProtocol], Awaitable[None]]:
+    """
+    Creates a request handler for the WebSocket server to manage incoming connections.
 
+    Args:
+        transmission_state (state.TransmittedState): The state object to be transmitted.
+        future (asyncio.Future[int]): A future object representing the game's completion status.
+
+    Returns:
+        Callable[[websockets.WebSocketServerProtocol], Awaitable[None]]: A function that can handle WebSocket requests.
+    """
     async def _handler(websocket: websockets.WebSocketServerProtocol) -> None:
         await _respond_to_message_with_transmission_state(
             websocket, transmission_state, future)
@@ -112,6 +192,20 @@ async def _respond_to_message_with_transmission_state(
     local_transmission_state: state.TransmittedState,
     future: asyncio.Future[int],
 ) -> None:
+    """
+    Responds to messages from the client with the current game state.
+
+    This coroutine is called by the server to handle incoming client messages and respond
+    with the latest game state.
+
+    Args:
+        websocket (websockets.WebSocketServerProtocol): The WebSocket connection object.
+        local_transmission_state (state.TransmittedState): The local game state to be transmitted.
+        future (asyncio.Future[int]): A future object representing the game's completion status.
+
+    Returns:
+        None
+    """
     global remote_ping_count, handshake_sent
     async for message in websocket:
         local_transmission_state.time_sent = time.time()
@@ -133,6 +227,17 @@ async def _respond_to_message_with_transmission_state(
 
 
 def _is_ping(current_time: float) -> bool:
+    """
+    Determines if the current time is suitable for sending a ping.
+
+    This function checks whether the specified interval has passed since the last ping.
+
+    Args:
+        current_time (float): The current time.
+
+    Returns:
+        bool: True if it's time to send a ping, False otherwise.
+    """
     time_difference = time.time() - current_time
     if time_difference < PING_PERIOD:
         return False
@@ -141,6 +246,14 @@ def _is_ping(current_time: float) -> bool:
 
 
 def _register_ping() -> tuple[int, float]:
+    """
+    Registers a ping event and updates the current time.
+
+    This function increments the ping count and updates the global current time.
+
+    Returns:
+        tuple[int, float]: The updated ping count and the current time.
+    """
     global local_ping_count
     global current_time
     local_ping_count += 1
@@ -149,6 +262,17 @@ def _register_ping() -> tuple[int, float]:
 
 
 def _update_remote_state(
+    """
+    Updates the remote game state based on the received response.
+
+    Args:
+        response (str | bytes): The received response from the remote client.
+        remote_state (state.TransmittedState): The current remote game state.
+        local_state (state.TransmittedState): The current local game state.
+
+    Returns:
+        state.TransmittedState: The updated remote game state.
+    """
     response: str | bytes,
     remote_state: state.TransmittedState,
     local_state: state.TransmittedState,
@@ -163,6 +287,21 @@ def _update_remote_state(
 
 
 async def _communicate_remote_state(
+    """
+    Manages the communication of the remote game state with the server.
+
+    This coroutine is part of the client task, handling the sending of requests and 
+    processing of responses from the server.
+
+    Args:
+        websocket (websockets.WebSocketClientProtocol): The WebSocket connection object.
+        remote_state (state.TransmittedState): The remote game state instance.
+        local_state (state.TransmittedState): The local game state instance.
+        future (asyncio.Future[int]): A future object representing the game's completion status.
+
+    Returns:
+        None
+    """
     websocket: websockets.WebSocketClientProtocol,
     remote_state: state.TransmittedState,
     local_state: state.TransmittedState,
