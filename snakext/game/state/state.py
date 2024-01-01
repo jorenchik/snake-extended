@@ -28,7 +28,6 @@ class TransmittedState:
     time_last_communicated: float = 0.0
     stop: bool = False
     is_handshake: bool = False
-    received_handshake: float = 0.0
     sent_handshake: float = 0.0
 
     def to_json(self) -> str:

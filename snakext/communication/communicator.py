@@ -157,8 +157,6 @@ def _update_remote_state(
     received_remote_state = state.TransmittedState.from_json(initial_load)
     remote_state.snake_placement = received_remote_state.snake_placement
     remote_state.sent_handshake = received_remote_state.sent_handshake
-    if received_remote_state.is_handshake:
-        local_state.received_handshake = time.time()
     remote_state.time_last_communicated = time.time()
     return received_remote_state
 
