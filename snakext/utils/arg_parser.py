@@ -1,3 +1,11 @@
+"""
+This module handles argument parsing for configuring multiplayer settings in a 
+game. It utilizes argparse to process command-line arguments, specifically for 
+setting up socket connections in a multiplayer environment. The module validates
+IP addresses and ports for remote servers, sets up local server ports, and 
+initializes multiplayer configurations based on the provided arguments.
+"""
+
 import argparse
 import re
 
@@ -38,6 +46,14 @@ is_configuration_initialized = False
 
 
 def parse_arguments() -> None:
+    """
+    Parses command-line arguments to configure the game's multiplayer settings.
+
+    This function initializes global configuration variables based on the provided command-line arguments. It sets up the local server port and remote server socket, and validates their formats. It also determines if the game is in multiplayer mode based on the presence of a remote server IP address.
+
+    Raises:
+        AttributeError: If the local server port or remote server socket is invalid.
+    """
     global is_configuration_initialized, DEFAULT_LOCAL_SERVER_PORT
     global REMOTE_SERVER_SOCKET, LOCAL_SERVER_PORT, REMOTE_SERVER_IP, REMOTE_SERVER_PORT, MULTIPLAYER
     if is_configuration_initialized:
@@ -55,6 +71,18 @@ def parse_arguments() -> None:
 
 
 def _parse_socket(socket: str) -> tuple[str, str]:
+    """
+    Parses the socket string to extract the IP address and port.
+
+    Args:
+        socket (str): The socket string in the format '<ip>:<port>'.
+
+    Returns:
+        tuple[str, str]: A tuple containing the extracted IP address and port.
+
+    Raises:
+        AttributeError: If the provided socket string is not in a valid format.
+    """
     is_ip_valid = re.match(IP_V4_SOCKET_REGEX, socket)
     if socket != "" and not is_ip_valid:
         raise AttributeError(INVALID_IP_MESSAGE)
