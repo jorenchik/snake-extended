@@ -156,6 +156,7 @@ def _update_remote_state(
     initial_load = json.loads(response)
     received_remote_state = state.TransmittedState.from_json(initial_load)
     remote_state.snake_placement = received_remote_state.snake_placement
+    remote_state.food_placement = received_remote_state.food_placement
     remote_state.sent_handshake = received_remote_state.sent_handshake
     remote_state.time_last_communicated = time.time()
     return received_remote_state

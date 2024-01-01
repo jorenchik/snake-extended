@@ -31,6 +31,8 @@ class GameStates(Enum):
 class TransmittedState:
     snake_placement: list[tuple[int,
                                 int]] = dataclasses.field(default_factory=list)
+    food_placement: list[tuple[int,
+                               int]] = dataclasses.field(default_factory=list)
     time_sent: float = 0.0
     time_last_communicated: float = 0.0
     is_handshake: bool = False

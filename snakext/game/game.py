@@ -86,10 +86,16 @@ async def setup_initial_placement(
 ) -> None:
 
     state_instance.previous_snake_placement = state_instance.local_snake_placement
-    state_instance.food_placement = logic_controller.place_food(
-        state_instance.food_placement,
-        state_instance.local_snake_placement,
-    )
+    is_host = state.is_host(local_communication_state,
+                            remote_communication_state)
+    if not state_instance.multiplayer or is_host:
+        state_instance.food_placement = logic_controller.place_food(
+            state_instance.food_placement,
+            state_instance.local_snake_placement,
+        )
+        if state_instance.multiplayer:
+            local_communication_state.food_placement = logic_controller.placement_array(
+                state_instance.food_placement)
 
 
 def run_game(
@@ -145,9 +151,24 @@ async def _main_game_loop(
         if state_instance.multiplayer:
             local_communication_state.snake_placement = logic_controller.placement_array(
                 state_instance.local_snake_placement, )
+            if state.is_host(local_communication_state,
+                             remote_communication_state):
+                local_communication_state.food_placement = logic_controller.placement_array(
+                    state_instance.food_placement)
             state_instance.remote_snake_placement = logic_controller.placement_from_array(
                 remote_communication_state.snake_placement,
                 (playground_instance.grid_rows, playground_instance.grid_cols),
+                f"{state.SNAKE_BODY_PLACE}0",
+            )
+
+        if state_instance.multiplayer and not state.is_host(
+                local_communication_state,
+                remote_communication_state,
+        ):
+            state_instance.food_placement = logic_controller.placement_from_array(
+                remote_communication_state.food_placement,
+                (playground_instance.grid_rows, playground_instance.grid_cols),
+                state.FOOD_PLACE,
             )
 
         _draw_game_view(playground_instance, state_instance)
@@ -161,7 +182,11 @@ async def _main_game_loop(
         if state_instance.game_status == state.GameStates.RUNNING.value:
             if game_clock.is_logic_tick(pygame_facade):
                 moved_successfully = logic_controller.handle_snake_movement(
-                    state_instance, movement_key)
+                    state_instance,
+                    movement_key,
+                    local_communication_state,
+                    remote_communication_state,
+                )
                 if not moved_successfully:
                     state_instance.game_status = state.GameStates.STOPPED.value
                 game_clock.logic_tick(pygame_facade)

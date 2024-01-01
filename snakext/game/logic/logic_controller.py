@@ -25,7 +25,7 @@ def handle_food_collision(
 ) -> tuple[state_types.OBJECT_ND_ARRAY, bool]:
     collision_coordinates = _search_collision(snake_placement,
                                               food_placement,
-                                              only_head=True)
+                                              only_head=False)
     collided = False
     if collision_coordinates != COORDINATES_NOT_FOUND:
         collided = True
@@ -69,12 +69,13 @@ def placement_array(
 def placement_from_array(
     placement_arr: list[tuple[int, int]],
     shape: tuple[int, int],
+    place_str: str,
 ) -> state_types.OBJECT_ND_ARRAY:
     placement = np.full(shape, state.VOID_PLACE, dtype=np.object_)
     for i, row in enumerate(placement):
         for k, place in enumerate(row):
             if [i, k] in placement_arr:
-                placement[i, k] = f"{state.SNAKE_BODY_PLACE}0"
+                placement[i, k] = place_str
     return placement
 
 
@@ -185,6 +186,8 @@ def check_collision(placement1: state_types.OBJECT_ND_ARRAY,
 def handle_snake_movement(
     state_instance: state.State,
     movement_key: int,
+    local_communication_state: state.TransmittedState,
+    remote_communication_state: state.TransmittedState,
 ) -> bool:
     if game_clock.moves():
         state_instance.previous_snake_placement = state_instance.local_snake_placement
@@ -201,7 +204,22 @@ def handle_snake_movement(
             state_instance.local_snake_placement,
             state_instance.food_placement,
         )
-        if state_instance.add_do_snake:
+        add_to_remote_snake = False
+        if state_instance.multiplayer and state.is_host(
+                local_communication_state, remote_communication_state):
+            state_instance.food_placement, add_to_remote_snake = handle_food_collision(
+                state_instance.remote_snake_placement,
+                state_instance.food_placement,
+            )
+        if state_instance.multiplayer and (
+                state_instance.add_do_snake
+                or add_to_remote_snake) and state.is_host(
+                    local_communication_state, remote_communication_state):
+            place_food(
+                state_instance.food_placement,
+                state_instance.local_snake_placement,
+            )
+        elif not state_instance.multiplayer and state_instance.add_do_snake:
             place_food(
                 state_instance.food_placement,
                 state_instance.local_snake_placement,
