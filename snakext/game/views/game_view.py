@@ -117,7 +117,8 @@ def _place_snake(
                 pygame_facade.draw_rect(grid[i, k], snake_color)
 
 
-def _place_food(pygame_facade: ModuleType, playground: playground.Playground,
+def _place_food(pygame_facade: ModuleType,
+                playground_instance: playground.Playground,
                 food_placement: state_types.OBJECT_ND_ARRAY,
                 grid: state_types.OBJECT_ND_ARRAY) -> None:
     """
@@ -137,4 +138,8 @@ def _place_food(pygame_facade: ModuleType, playground: playground.Playground,
             if not isinstance(grid[i, k], pygame_facade.Rect):
                 raise TypeError("Grid should consist of only Rect objects")
             if place == state.FOOD_PLACE:
-                pygame_facade.draw_rect(grid[i, k], playground.food_color)
+                pygame_facade.draw_rect(
+                    grid[i, k],
+                    playground_instance.food_color,
+                    border_radius=playground.FOOD_BORDER_RADIUS,
+                )

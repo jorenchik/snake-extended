@@ -27,6 +27,7 @@ WALL_COLOR = pygame_facade.Color(120, 120, 120, 255)
 LOCAL_SNAKE_COLOR = pygame_facade.Color(20, 50, 90, 255)
 REMOTE_SNAKE_COLOR = pygame_facade.Color(70, 90, 90, 255)
 FOOD_COLOR = pygame_facade.Color(50, 205, 50, 255)
+FOOD_BORDER_RADIUS = 10
 PLAYGROUND_BACKGROUND_COLOR = pygame_facade.Color(129, 143, 180, 255)
 
 

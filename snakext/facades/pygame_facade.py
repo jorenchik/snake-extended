@@ -150,8 +150,9 @@ def rect(pos_vector_top_left: tuple[float, float],
 def draw_rect(
     rect: pygame.Rect,
     color: pygame.Color,
+    border_radius: int = 0,
 ) -> None:
-    pygame.draw.rect(_screen, color, rect)
+    pygame.draw.rect(_screen, color, rect, border_radius=border_radius)
 
 
 def fill_background_with_color(background_color: Color) -> None:
