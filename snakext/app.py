@@ -53,7 +53,7 @@ def _get_server_task(
     game_future: asyncio.Future[int],
     local_transmitted_state: state.TransmittedState,
 ) -> Coroutine[Any, Any, websockets.WebSocketServer]:
-     """
+    """
     Initializes the server task for the multiplayer game.
 
     Args:

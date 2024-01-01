@@ -294,6 +294,9 @@ async def _main_game_loop(
 
 
 def _draw_game_view(
+    playground_instance: game_view.playground.Playground,
+    state_instance: state.State,
+) -> None:
     """
     Draws the current state of the game.
 
@@ -307,9 +310,6 @@ def _draw_game_view(
     Returns:
         None
     """
-    playground_instance: game_view.playground.Playground,
-    state_instance: state.State,
-) -> None:
     game_view.draw_game_view(
         playground_instance,
         state_instance.local_snake_placement,

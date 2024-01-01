@@ -180,6 +180,7 @@ def _create_request_handler(
     Returns:
         Callable[[websockets.WebSocketServerProtocol], Awaitable[None]]: A function that can handle WebSocket requests.
     """
+
     async def _handler(websocket: websockets.WebSocketServerProtocol) -> None:
         await _respond_to_message_with_transmission_state(
             websocket, transmission_state, future)
@@ -262,21 +263,19 @@ def _register_ping() -> tuple[int, float]:
 
 
 def _update_remote_state(
-    """
-    Updates the remote game state based on the received response.
-
-    Args:
-        response (str | bytes): The received response from the remote client.
-        remote_state (state.TransmittedState): The current remote game state.
-        local_state (state.TransmittedState): The current local game state.
-
-    Returns:
-        state.TransmittedState: The updated remote game state.
-    """
     response: str | bytes,
     remote_state: state.TransmittedState,
     local_state: state.TransmittedState,
 ) -> state.TransmittedState:
+    """
+    Calculates the position in the middle-right part of the matrix.
+
+    Args:
+        matrix (state_types.OBJECT_ND_ARRAY): The matrix to calculate the position for.
+
+    Returns:
+        tuple[int, int]: The middle-right position in the matrix.
+    """
     initial_load = json.loads(response)
     received_remote_state = state.TransmittedState.from_json(initial_load)
     remote_state.snake_placement = received_remote_state.snake_placement
@@ -287,6 +286,11 @@ def _update_remote_state(
 
 
 async def _communicate_remote_state(
+    websocket: websockets.WebSocketClientProtocol,
+    remote_state: state.TransmittedState,
+    local_state: state.TransmittedState,
+    future: asyncio.Future[int],
+) -> None:
     """
     Manages the communication of the remote game state with the server.
 
@@ -302,11 +306,6 @@ async def _communicate_remote_state(
     Returns:
         None
     """
-    websocket: websockets.WebSocketClientProtocol,
-    remote_state: state.TransmittedState,
-    local_state: state.TransmittedState,
-    future: asyncio.Future[int],
-) -> None:
     global current_time, local_ping_count
     while True:
         if future.done():

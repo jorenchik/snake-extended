@@ -32,7 +32,7 @@ snake_color = pygame_facade.Color(50, 50, 50, 255)
 
 @dataclass
 class Playground:
-     """
+    """
     Represents the playground where the snake game takes place.
 
     This data class stores the dimensions and positions of various game elements
