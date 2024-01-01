@@ -3,7 +3,7 @@ import websockets
 import asyncio
 import time
 import json
-from typing import Awaitable, Callable
+from typing import Awaitable, Callable, Coroutine, Any
 from snakext.game.state import state
 from snakext.utils import arg_parser
 
@@ -23,7 +23,35 @@ local_ping_count = 0
 remote_ping_count = 0
 
 
-async def start_client(
+def make_server_task(
+    future: asyncio.Future[int],
+    local_transmitted_state_instance: state.TransmittedState,
+) -> Coroutine[Any, Any, websockets.WebSocketServer]:
+    if not state.local_transmitted_state_instance:
+        raise ValueError("Local communication state is not initialized")
+    start_server_task = _start_server(
+        local_transmitted_state=local_transmitted_state_instance,
+        future=future)
+    return start_server_task
+
+
+def make_client_task(
+    future: asyncio.Future[int],
+    local_transmitted_state_instance: state.TransmittedState,
+    remote_transmitted_state_instance: state.TransmittedState,
+) -> Coroutine[Any, Any, None]:
+    if not state.local_transmitted_state_instance:
+        raise ValueError("Local communication state is not initialized")
+    if not state.remote_transmitted_state_instance:
+        raise ValueError("Remote communication state is not initialized")
+    start_client_task = _start_client(
+        remote_transmitted_state=remote_transmitted_state_instance,
+        local_transmitted_state=local_transmitted_state_instance,
+        future=future)
+    return start_client_task
+
+
+async def _start_client(
     remote_transmitted_state: state.TransmittedState,
     local_transmitted_state: state.TransmittedState,
     future: asyncio.Future[int],
@@ -32,7 +60,7 @@ async def start_client(
                                 local_transmitted_state, future)
 
 
-async def start_server(
+async def _start_server(
     local_transmitted_state: state.TransmittedState,
     future: asyncio.Future[int],
 ) -> websockets.WebSocketServer:

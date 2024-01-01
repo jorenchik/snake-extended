@@ -1,6 +1,7 @@
 import asyncio
+import threading
 from snakext.facades import pygame_facade
-from snakext.utils import game_clock, matrix, arg_parser
+from snakext.utils import matrix, game_clock
 from snakext.game.logic import logic_controller
 from snakext.game.state import state
 from snakext.game.views import game_view, playground
@@ -25,6 +26,22 @@ async def init_game(
         remote_communication_state=remote_communication_state,
     )
     return playground_instance, state_instance
+
+
+def make_game_thread(
+    local_transmitted_state_instance: state.TransmittedState,
+    remote_transmitted_state_instance: state.TransmittedState,
+    game_future: asyncio.Future[int],
+) -> threading.Thread:
+    game_thread = threading.Thread(
+        target=run_game,
+        args=[
+            local_transmitted_state_instance,
+            remote_transmitted_state_instance,
+            game_future,
+        ],
+    )
+    return game_thread
 
 
 async def setup_initial_placement(
