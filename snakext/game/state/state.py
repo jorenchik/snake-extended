@@ -38,15 +38,7 @@ class TransmittedState:
     @classmethod
     def from_json(cls, json_str: str) -> TransmittedState:
         dict_ = json.loads(json_str)
-        transmitted_state = TransmittedState(
-            snake_placement=dict_["snake_placement"],
-            time_last_communicated=dict_["time_last_communicated"],
-            stop=dict_["stop"],
-            is_handshake=dict_["is_handshake"],
-            time_sent=dict_["time_sent"],
-            received_handshake=dict_["time_sent"],
-            sent_handshake=dict_["sent_handshake"],
-        )
+        transmitted_state = TransmittedState(**dict_)
         return transmitted_state
 
 
