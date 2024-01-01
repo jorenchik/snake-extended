@@ -3,6 +3,7 @@ from __future__ import annotations
 import numpy as np
 import dataclasses
 import json
+from enum import Enum
 from snakext.game.state import state_types
 from snakext.utils import arg_parser
 
@@ -20,15 +21,21 @@ RIGHT_DIRECTION = 3
 LEFT_DIRECTION = 4
 
 
+class GameStates(Enum):
+    NOT_STARTED = 1
+    RUNNING = 2
+    STOPPED = 3
+
+
 @dataclasses.dataclass
 class TransmittedState:
     snake_placement: list[tuple[int,
                                 int]] = dataclasses.field(default_factory=list)
     time_sent: float = 0.0
     time_last_communicated: float = 0.0
-    stop: bool = False
     is_handshake: bool = False
     sent_handshake: float = 0.0
+    game_state: int = GameStates.NOT_STARTED.value
 
     def to_json(self) -> str:
         dict_ = dataclasses.asdict(self)

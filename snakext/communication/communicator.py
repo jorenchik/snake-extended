@@ -114,9 +114,6 @@ async def _respond_to_message_with_transmission_state(
 ) -> None:
     global remote_ping_count, handshake_sent
     async for message in websocket:
-        if future.done():
-            await websocket.close_connection()
-            return
         local_transmission_state.time_sent = time.time()
         local_transmission_state.is_handshake = True if not handshake_sent else False
         response = json.dumps(local_transmission_state.to_json())
@@ -126,7 +123,10 @@ async def _respond_to_message_with_transmission_state(
             handshake_sent = True
             local_transmission_state.sent_handshake = time.time()
         local_transmission_state.time_last_communicated = time.time()
-        if local_transmission_state.stop:
+        if future.done():
+            await websocket.close_connection()
+            return
+        if local_transmission_state.game_state == state.GameStates.STOPPED.value:
             future.set_result(0)
             await websocket.close_connection()
             return
@@ -184,7 +184,7 @@ async def _communicate_remote_state(
             remote_state,
             local_state,
         )
-        if received_remote_state.stop:
+        if received_remote_state.game_state == state.GameStates.STOPPED.value:
             future.set_result(0)
             await websocket.close_connection()
             break

@@ -29,6 +29,8 @@ KEY_DIRECTION = {
     K_LEFT: state.LEFT_DIRECTION,
 }
 
+EXIT_KEYS = ((pygame.KMOD_LCTRL, pygame.K_c), (0, pygame.K_q))
+
 
 def get_ticks_seconds() -> float:
     return pygame.time.get_ticks() / 1000
@@ -93,11 +95,26 @@ def movement_keys() -> list[int]:
     return movement_keys
 
 
-def handle_exit_event() -> None:
+def is_quit_key() -> bool:
+    current_mod = pygame.key.get_mods()
+    pressed_keys = pygame.key.get_pressed()
+    # print(pygame.K_q, pressed_keys, pygame.K_q in pressed_keys)
+    for mod, key in EXIT_KEYS:
+        if pressed_keys[key] and mod == current_mod:
+            return True
+    return False
+
+
+def is_quit_event() -> bool:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+            return True
+    return is_quit_key()
+
+
+def exit() -> None:
+    pygame.quit()
+    sys.exit()
 
 
 #
