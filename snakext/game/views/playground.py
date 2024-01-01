@@ -24,7 +24,8 @@ FRAME_MARGIN_Y = 5
 GRID_COLUMN_COUNT = 30
 
 WALL_COLOR = pygame_facade.Color(120, 120, 120, 255)
-SNAKE_COLOR = pygame_facade.Color(50, 50, 50, 255)
+LOCAL_SNAKE_COLOR = pygame_facade.Color(20, 50, 90, 255)
+REMOTE_SNAKE_COLOR = pygame_facade.Color(70, 90, 90, 255)
 FOOD_COLOR = pygame_facade.Color(50, 205, 50, 255)
 PLAYGROUND_BACKGROUND_COLOR = pygame_facade.Color(129, 143, 180, 255)
 
@@ -50,7 +51,8 @@ class Playground:
     grid_cols: int
     wall_color: pygame_facade.Color
     background_color: pygame_facade.Color
-    snake_color: pygame_facade.Color
+    local_snake_color: pygame_facade.Color
+    remote_snake_color: pygame_facade.Color
     food_grid: state_types.OBJECT_ND_ARRAY
     food_color: pygame_facade.Color
 
@@ -97,7 +99,8 @@ def _init_playground() -> Playground:
             wall_color=pygame_facade.create_color(WALL_COLOR),
             background_color=pygame_facade.create_color(
                 PLAYGROUND_BACKGROUND_COLOR),
-            snake_color=pygame_facade.create_color(SNAKE_COLOR),
+            local_snake_color=pygame_facade.create_color(LOCAL_SNAKE_COLOR),
+            remote_snake_color=pygame_facade.create_color(REMOTE_SNAKE_COLOR),
             food_grid=food_grid,
             food_color=pygame_facade.create_color(FOOD_COLOR),
         )

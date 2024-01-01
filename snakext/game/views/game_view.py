@@ -50,10 +50,20 @@ def _draw_contents(
     _draw_walls(playground)
     _place_food(pygame_facade, playground, food_placement,
                 playground.food_grid)
-    _place_snake(pygame_facade, playground, snake_placement,
-                 playground.snake_grid)
-    _place_snake(pygame_facade, playground, remote_snake_placement,
-                 playground.remote_snake_grid)
+    _place_snake(
+        pygame_facade,
+        playground,
+        snake_placement,
+        playground.snake_grid,
+        playground.local_snake_color,
+    )
+    _place_snake(
+        pygame_facade,
+        playground,
+        remote_snake_placement,
+        playground.remote_snake_grid,
+        playground.remote_snake_color,
+    )
 
 
 def _draw_walls(playground: playground.Playground) -> None:
@@ -76,12 +86,16 @@ def _draw_grid(playground: playground.Playground) -> None:
     """
     for row in playground.snake_grid:
         for el in row:
-            pygame_facade.draw_rect(el, playground.snake_color)
+            pygame_facade.draw_rect(el, playground.local_snake_color)
 
 
-def _place_snake(pygame_facade: ModuleType, playground: playground.Playground,
-                 snake_placement: state_types.OBJECT_ND_ARRAY,
-                 grid: state_types.OBJECT_ND_ARRAY) -> None:
+def _place_snake(
+    pygame_facade: ModuleType,
+    playground: playground.Playground,
+    snake_placement: state_types.OBJECT_ND_ARRAY,
+    grid: state_types.OBJECT_ND_ARRAY,
+    snake_color: pygame_facade.Color,
+) -> None:
     """
     Places the snake on the game grid.
 
@@ -90,6 +104,7 @@ def _place_snake(pygame_facade: ModuleType, playground: playground.Playground,
         playground (playground.Playground): The playground object with layout information.
         snake_placement (state_types.OBJECT_ND_ARRAY): The placement array of the snake.
         grid (state_types.OBJECT_ND_ARRAY): The grid array to place the snake on.
+        snake_color (pygame_facade.Color): Color of the snake drawn
 
     Raises:
         TypeError: If the grid does not consist of Pygame Rect objects.
@@ -99,7 +114,7 @@ def _place_snake(pygame_facade: ModuleType, playground: playground.Playground,
             if not isinstance(grid[i, k], pygame_facade.Rect):
                 raise TypeError("Grid should consist of only Rect objects")
             if place[0] in state.SNAKE_PLACES:
-                pygame_facade.draw_rect(grid[i, k], playground.snake_color)
+                pygame_facade.draw_rect(grid[i, k], snake_color)
 
 
 def _place_food(pygame_facade: ModuleType, playground: playground.Playground,
