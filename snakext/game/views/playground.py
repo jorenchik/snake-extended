@@ -18,6 +18,7 @@ from snakext.game.state import state_types
 PLAYGROUND_MARGIN = 40
 WALL_MARGIN = 0
 WALL_WIDTH = 25
+WALL_BORDER_RADIUS = 10
 PLAYGROUND_POSITION = (PLAYGROUND_MARGIN, PLAYGROUND_MARGIN)
 FRAME_MARGIN_X = 5
 FRAME_MARGIN_Y = 5
@@ -260,7 +261,7 @@ def _make_bottom_wall(playground_position: tuple[float, float],
                       wall_width: float) -> pygame_facade.Rect:
     position_vector: tuple[float,
                            float] = (0, playground_dimensions[1] - wall_width)
-    rect_dimensions = (playground_dimensions[0] - wall_width, wall_width)
+    rect_dimensions = (playground_dimensions[0], wall_width)
     position_vector = vec.vec_2d_add(position_vector, playground_position)
     wall_rect = pygame_facade.rect(position_vector, rect_dimensions)
     return wall_rect

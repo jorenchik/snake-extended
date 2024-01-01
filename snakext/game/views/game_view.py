@@ -66,15 +66,19 @@ def _draw_contents(
     )
 
 
-def _draw_walls(playground: playground.Playground) -> None:
+def _draw_walls(playground_instance: playground.Playground) -> None:
     """
     Draws the walls of the playground.
 
     Args:
         playground (playground.Playground): The playground object with wall information.
     """
-    for wall in playground.walls:
-        pygame_facade.draw_rect(wall, playground.wall_color)
+    for wall in playground_instance.walls:
+        pygame_facade.draw_rect(
+            wall,
+            playground_instance.wall_color,
+            border_radius=playground.WALL_BORDER_RADIUS,
+        )
 
 
 def _draw_grid(playground: playground.Playground) -> None:
