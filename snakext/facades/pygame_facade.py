@@ -40,8 +40,16 @@ def init_game(pygame_module: ModuleType = pygame) -> None:
     global _screen, _clock, _pygame_module
     pygame_module.init()
     _pygame_module = pygame_module
-    _screen = pygame.display.set_mode(DEFAULT_RESOLUTION)
+    _screen = pygame.display.set_mode(
+        DEFAULT_RESOLUTION,
+        flags=pygame.SCALED | pygame.HIDDEN,
+    )
     _clock = pygame.time.Clock()
+
+
+def show_screen() -> None:
+    global _screen
+    _screen = pygame.display.set_mode(DEFAULT_RESOLUTION, )
 
 
 Rect = pygame.Rect

@@ -20,11 +20,17 @@ async def init_game(
         playground_instance.grid_rows,
         playground_instance.grid_cols,
     )
+    await establish_connection(
+        state_instance,
+        local_communication_state,
+        remote_communication_state,
+    )
     await setup_initial_placement(
         state_instance=state_instance,
         local_communication_state=local_communication_state,
         remote_communication_state=remote_communication_state,
     )
+    pygame_facade.show_screen()
     return playground_instance, state_instance
 
 
@@ -44,7 +50,7 @@ def make_game_thread(
     return game_thread
 
 
-async def setup_initial_placement(
+async def establish_connection(
     state_instance: state.State,
     local_communication_state: state.TransmittedState,
     remote_communication_state: state.TransmittedState,
@@ -68,6 +74,14 @@ async def setup_initial_placement(
                     choose_coordinates=snake_choose_function,
                 )
                 break
+
+
+async def setup_initial_placement(
+    state_instance: state.State,
+    local_communication_state: state.TransmittedState,
+    remote_communication_state: state.TransmittedState,
+) -> None:
+
     state_instance.previous_snake_placement = state_instance.local_snake_placement
     state_instance.food_placement = logic_controller.place_food(
         state_instance.food_placement,
