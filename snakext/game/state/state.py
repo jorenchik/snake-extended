@@ -22,13 +22,14 @@ LEFT_DIRECTION = 4
 
 @dataclasses.dataclass
 class TransmittedState:
-    snake_placement: list[tuple[int, int]]
-    time_sent: float
-    time_last_communicated: float
-    stop: bool
-    is_handshake: bool
-    received_handshake: float
-    sent_handshake: float
+    snake_placement: list[tuple[int,
+                                int]] = dataclasses.field(default_factory=list)
+    time_sent: float = 0.0
+    time_last_communicated: float = 0.0
+    stop: bool = False
+    is_handshake: bool = False
+    received_handshake: float = 0.0
+    sent_handshake: float = 0.0
 
     def to_json(self) -> str:
         dict_ = dataclasses.asdict(self)
@@ -86,14 +87,14 @@ def get_game_state(rows: int, cols: int) -> State:
 def get_local_transmitted_state() -> TransmittedState:
     global local_transmitted_state_instance
     if local_transmitted_state_instance is None:
-        local_transmitted_state_instance = _init_transmitted_state()
+        local_transmitted_state_instance = TransmittedState()
     return local_transmitted_state_instance
 
 
 def get_remote_transmitted_state() -> TransmittedState:
     global remote_transmitted_state_instance
     if remote_transmitted_state_instance is None:
-        remote_transmitted_state_instance = _init_transmitted_state()
+        remote_transmitted_state_instance = TransmittedState()
     return remote_transmitted_state_instance
 
 
@@ -120,15 +121,3 @@ def _init_state(
         is_handshake_done=False,
     )
     return state_instance
-
-
-def _init_transmitted_state() -> TransmittedState:
-    return TransmittedState(
-        snake_placement=[],
-        time_sent=0.0,
-        time_last_communicated=0.0,
-        stop=False,
-        is_handshake=False,
-        received_handshake=0.0,
-        sent_handshake=0.0,
-    )
