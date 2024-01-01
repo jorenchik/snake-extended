@@ -20,17 +20,31 @@ async def init_game(
         playground_instance.grid_rows,
         playground_instance.grid_cols,
     )
-    await establish_connection(
-        state_instance,
-        local_communication_state,
-        remote_communication_state,
-    )
+    if state_instance.multiplayer:
+        await establish_connection(
+            state_instance,
+            local_communication_state,
+            remote_communication_state,
+        )
     await setup_initial_placement(
         state_instance=state_instance,
         local_communication_state=local_communication_state,
         remote_communication_state=remote_communication_state,
     )
+    if state_instance.multiplayer and not state.is_host(
+            local_communication_state,
+            remote_communication_state,
+    ):
+        snake_choose_function = matrix.middle_right_element_position
+    else:
+        snake_choose_function = matrix.middle_left_element_position
+    state_instance.local_snake_placement = logic_controller.place_initial_snake(
+        state_instance.local_snake_placement,
+        choose_coordinates=snake_choose_function,
+    )
     pygame_facade.show_screen()
+    state_instance.game_status = state.GameStates.RUNNING.value
+    local_communication_state.game_state = state_instance.game_status
     return playground_instance, state_instance
 
 
@@ -62,17 +76,6 @@ async def establish_connection(
                     local_communication_state,
                     remote_communication_state,
             ):
-                if state.is_host(
-                        local_communication_state,
-                        remote_communication_state,
-                ):
-                    snake_choose_function = matrix.middle_left_element_position
-                else:
-                    snake_choose_function = matrix.middle_right_element_position
-                state_instance.local_snake_placement = logic_controller.place_initial_snake(
-                    state_instance.local_snake_placement,
-                    choose_coordinates=snake_choose_function,
-                )
                 break
 
 
@@ -121,36 +124,56 @@ async def _main_game_loop(
     movement_key = state.RIGHT_DIRECTION
     while True:
         game_clock.tick(pygame_facade)
+        if state_instance.multiplayer and (
+                remote_communication_state.game_state
+                == state.GameStates.STOPPED.value):
+            future.set_result(0)
+            break
+        if (not state_instance.multiplayer and state_instance.game_status
+                == state.GameStates.STOPPED.value):
+            future.set_result(0)
+            break
+        if future.done():
+            break
+
         if pygame_facade.is_quit_event():
             local_communication_state.game_state = state.GameStates.STOPPED.value
             pygame_facade.exit()
+
         current_movement_keys = pygame_facade.movement_keys()
-        local_communication_state.snake_placement = logic_controller.placement_array(
-            state_instance.local_snake_placement, )
-        state_instance.remote_snake_placement = logic_controller.placement_from_array(
-            remote_communication_state.snake_placement,
-            (playground_instance.grid_rows, playground_instance.grid_cols),
-        )
+
+        if state_instance.multiplayer:
+            local_communication_state.snake_placement = logic_controller.placement_array(
+                state_instance.local_snake_placement, )
+            state_instance.remote_snake_placement = logic_controller.placement_from_array(
+                remote_communication_state.snake_placement,
+                (playground_instance.grid_rows, playground_instance.grid_cols),
+            )
+
         _draw_game_view(playground_instance, state_instance)
+
         movement_key = pygame_facade.movement_key(
             current_movement_keys,
             pygame_facade.movement_keys,
             movement_key,
         )
-        if (remote_communication_state.time_last_communicated != 0.0
-                and local_communication_state.time_last_communicated != 0.0):
+
+        if state_instance.game_status == state.GameStates.RUNNING.value:
             if game_clock.is_logic_tick(pygame_facade):
                 moved_successfully = logic_controller.handle_snake_movement(
                     state_instance, movement_key)
                 if not moved_successfully:
-                    break
+                    state_instance.game_status = state.GameStates.STOPPED.value
                 game_clock.logic_tick(pygame_facade)
-        if future.done():
-            break
-        if logic_controller.check_remote_snake_collision(
-                state_instance.local_snake_placement,
-                state_instance.remote_snake_placement):
-            local_communication_state.game_state = state.GameStates.STOPPED.value
+
+        if state_instance.multiplayer:
+            if logic_controller.check_remote_snake_collision(
+                    state_instance.local_snake_placement,
+                    state_instance.remote_snake_placement,
+            ):
+                state_instance.game_status = state.GameStates.STOPPED.value
+                local_communication_state.game_state = state_instance.game_status
+
         pygame_facade.pump()
 
 

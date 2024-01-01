@@ -36,7 +36,7 @@ def main() -> None:
         )
         loop.create_task(start_server)
         loop.create_task(start_client)
-    asyncio.get_event_loop().run_until_complete(game_future)
+        asyncio.get_event_loop().run_until_complete(game_future)
 
 
 def _get_server_task(

@@ -60,6 +60,7 @@ class State:
     multiplayer: bool
     is_host: bool
     is_handshake_done: bool
+    game_status: int
 
 
 state_instance: State | None = None
@@ -125,5 +126,6 @@ def _init_state(
         multiplayer=arg_parser.MULTIPLAYER,
         is_host=False,
         is_handshake_done=False,
+        game_status=GameStates.NOT_STARTED.value,
     )
     return state_instance
