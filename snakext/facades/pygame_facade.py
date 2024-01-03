@@ -22,12 +22,21 @@ K_UP = pygame.K_UP
 K_RIGHT = pygame.K_RIGHT
 K_DOWN = pygame.K_DOWN
 K_LEFT = pygame.K_LEFT
-MOVEMENT_KEYS = [K_UP, K_RIGHT, K_DOWN, K_LEFT]
+MOVEMENT_KEY_SETS = (
+    (K_UP, pygame.K_k),
+    (K_RIGHT, pygame.K_l),
+    (K_DOWN, pygame.K_j),
+    (K_LEFT, pygame.K_h),
+)
 KEY_DIRECTION = {
     K_UP: state.TOP_DIRECTION,
     K_RIGHT: state.RIGHT_DIRECTION,
     K_DOWN: state.BOTTOM_DIRECTION,
     K_LEFT: state.LEFT_DIRECTION,
+    pygame.K_k: state.TOP_DIRECTION,
+    pygame.K_l: state.RIGHT_DIRECTION,
+    pygame.K_j: state.BOTTOM_DIRECTION,
+    pygame.K_h: state.LEFT_DIRECTION,
 }
 
 EXIT_KEYS = (pygame.K_q, )
@@ -92,15 +101,17 @@ def pump() -> None:
 
 
 def movement_keys() -> list[int]:
-    global MOVEMENT_KEYS
+    global MOVEMENT_KEY_SETS
     keys_pressed = pygame.key.get_pressed()
-    movement_keys = []
-    for key in MOVEMENT_KEYS:
-        if keys_pressed[key]:
-            if key in movement_keys:
-                movement_keys.remove(key)
-            else:
-                movement_keys.append(key)
+    movement_keys: list[int] = []
+    for key_set in MOVEMENT_KEY_SETS:
+        for key in key_set:
+            if keys_pressed[key]:
+                if key in movement_keys:
+                    movement_keys.remove(key)
+                else:
+                    movement_keys.append(key)
+
     return movement_keys
 
 
