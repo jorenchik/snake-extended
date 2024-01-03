@@ -14,6 +14,7 @@ from snakext.utils import arg_parser
 CONNECTED_MESSAGE = "Connection successful!"
 START_SERVER_SUCCESS = "Server started successfully!"
 NOT_CONNECTED_MESSAGE = "Connection failed. Trying again..."
+CONNECTION_CLOSED_MESSAGE = "Connection closed. Aborting..."
 
 PINGS_PER_SECOND = 3
 PING_PERIOD = 1 / PINGS_PER_SECOND
@@ -215,14 +216,22 @@ async def _respond_to_message_with_transmission_state(
         local_transmission_state.is_handshake = True if not handshake_sent else False
         response = json.dumps(local_transmission_state.to_json())
         remote_ping_count += 1
-        await websocket.send(response)
+        if future.done():
+            try:
+                await websocket.close_connection()
+            except websockets.exceptions.ConnectionClosedError:
+                pass
+            break
+        try:
+            await websocket.send(response)
+        except websockets.exceptions.ConnectionClosedError:
+            print(CONNECTION_CLOSED_MESSAGE)
+            future.set_result(0)
+            break
         if not handshake_sent:
             handshake_sent = True
             local_transmission_state.sent_handshake = time.time()
         local_transmission_state.time_last_communicated = time.time()
-        if future.done():
-            await websocket.close_connection()
-            return
         if local_transmission_state.game_state == state.GameStates.STOPPED.value:
             future.set_result(0)
             await websocket.close_connection()
@@ -318,8 +327,18 @@ async def _communicate_remote_state(
         local_ping_count, current_time = _register_ping()
         request = f"""Hello from client #{local_ping_count},
                     time: {current_time}"""
-        await websocket.send(request)
-        response = await websocket.recv()
+        try:
+            await websocket.send(request)
+        except websockets.exceptions.ConnectionClosedError:
+            print(CONNECTION_CLOSED_MESSAGE)
+            future.set_result(0)
+            break
+        try:
+            response = await websocket.recv()
+        except websockets.exceptions.ConnectionClosedError:
+            print(CONNECTION_CLOSED_MESSAGE)
+            future.set_result(0)
+            break
         received_remote_state = _update_remote_state(
             response,
             remote_state,
