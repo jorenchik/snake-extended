@@ -12,6 +12,7 @@ from snakext.game.state import state
 from snakext.utils import arg_parser
 
 CONNECTED_MESSAGE = "Connection successful!"
+START_SERVER_SUCCESS = "Server started successfully!"
 NOT_CONNECTED_MESSAGE = "Connection failed. Trying again..."
 
 PINGS_PER_SECOND = 10
@@ -124,9 +125,10 @@ async def _start_server(
     _handle_request = _create_request_handler(local_transmitted_state, future)
     start_server = await websockets.serve(
         _handle_request,
-        "localhost",
+        "0.0.0.0",
         arg_parser.LOCAL_SERVER_PORT,
     )
+    print(START_SERVER_SUCCESS)
     return start_server
 
 
