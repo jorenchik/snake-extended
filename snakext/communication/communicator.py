@@ -126,7 +126,7 @@ async def _start_server(
     _handle_request = _create_request_handler(local_transmitted_state, future)
     start_server = await websockets.serve(
         _handle_request,
-        "0.0.0.0",
+        arg_parser.LOCAL_SERVER_IP,
         arg_parser.LOCAL_SERVER_PORT,
     )
     print(START_SERVER_SUCCESS)

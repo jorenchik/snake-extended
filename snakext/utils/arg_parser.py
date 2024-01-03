@@ -14,17 +14,20 @@ INVALID_IP_MESSAGE = "Provided socket is invalid"
 INVALID_PORT_MESSAGE = "Provided port is invalid"
 
 PORT_REGEX = r'(?P<PORT>\d{1,5}$)'
-IP_V4_SOCKET_REGEX = r'^(?P<IP>((\d{1,3}\.){3}\d{1,3})|(localhost)):(?P<PORT>\d{1,5}$)'
+IP_V4_SOCKET_REGEX = r'^(?P<IP>((\d{1,3}\.){3}\d{1,3})|(localhost)):?(?P<PORT>\d{1,5}$)?'
 
 DEFAULT_LOCAL_SERVER_PORT = "54321"
-# DEFAULT_REMOTE_SERVER_PORT = "54322"
+DEFAULT_REMOTE_SERVER_PORT = "54321"
 
 # Configuration variables
 MULTIPLAYER = False
+LOCAL_SERVER_IP = None
 LOCAL_SERVER_PORT = None
 REMOTE_SERVER_SOCKET = None
 REMOTE_SERVER_IP = None
 REMOTE_SERVER_PORT = None
+LOCALHOST_IPS = ("127.0.0.1", "localhost")
+REMOTE_LISTEN_IP = "0.0.0.0"
 
 parser = argparse.ArgumentParser(description="Configuration CLI")
 parser.add_argument(
@@ -54,8 +57,8 @@ def parse_arguments() -> None:
     Raises:
         AttributeError: If the local server port or remote server socket is invalid.
     """
-    global is_configuration_initialized, DEFAULT_LOCAL_SERVER_PORT
-    global REMOTE_SERVER_SOCKET, LOCAL_SERVER_PORT, REMOTE_SERVER_IP, REMOTE_SERVER_PORT, MULTIPLAYER
+    global is_configuration_initialized
+    global REMOTE_SERVER_SOCKET, LOCAL_SERVER_PORT, REMOTE_SERVER_IP, REMOTE_SERVER_PORT, MULTIPLAYER, LOCAL_SERVER_IP
     if is_configuration_initialized:
         return
     args = parser.parse_args()
@@ -67,6 +70,10 @@ def parse_arguments() -> None:
         raise AttributeError(NO_IP_WITH_LOCAL_PORT_MESSAGE)
     REMOTE_SERVER_IP, REMOTE_SERVER_PORT = _parse_socket(REMOTE_SERVER_SOCKET)
     MULTIPLAYER = REMOTE_SERVER_IP != ""
+    if REMOTE_SERVER_IP not in LOCALHOST_IPS:
+        LOCAL_SERVER_IP = REMOTE_LISTEN_IP
+    if REMOTE_SERVER_PORT == "":
+        REMOTE_SERVER_PORT = DEFAULT_REMOTE_SERVER_PORT
     is_configuration_initialized = True
 
 
