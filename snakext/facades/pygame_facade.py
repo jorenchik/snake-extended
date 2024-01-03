@@ -1,6 +1,7 @@
 """ Offers simpler interface for pygame functionality. """
 import pygame
 import sys
+import itertools
 from types import ModuleType
 from typing import Callable
 from snakext.game.state import state
@@ -29,7 +30,7 @@ KEY_DIRECTION = {
     K_LEFT: state.LEFT_DIRECTION,
 }
 
-EXIT_KEYS = ((pygame.KMOD_LCTRL, pygame.K_c), (0, pygame.K_q))
+EXIT_KEYS = (pygame.K_q, )
 
 
 def get_ticks_seconds() -> float:
@@ -104,11 +105,10 @@ def movement_keys() -> list[int]:
 
 
 def is_quit_key() -> bool:
-    current_mod = pygame.key.get_mods()
+    # current_mod = pygame.key.get_mods()
     pressed_keys = pygame.key.get_pressed()
-    # print(pygame.K_q, pressed_keys, pygame.K_q in pressed_keys)
-    for mod, key in EXIT_KEYS:
-        if pressed_keys[key] and mod == current_mod:
+    for key in EXIT_KEYS:
+        if pressed_keys[key]:
             return True
     return False
 
