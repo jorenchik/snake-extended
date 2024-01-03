@@ -19,32 +19,32 @@ realizēta ar ``websockets'' bibliotēku un spēles funkcionalitāte ir realizē
 
 Iegūt pirmkoda repozitoriju, piemēram, klonējot to no github repozitorija.
 
-```bash
+```
 git clone https://github.com/jorenchik/snake-extended 
 ```
 
 Izveidot virtuālo Python vidi (nav obligāts).
 
-```bash
+```
 python -m venv venv
 source ./venv/bin/activate
 ```
 
 Instalēt ``poetry'' atkarību intalēšanai.
 
-```bash
+```
 python -m pip install poetry 
 ```
 
 Instalēt projekta atkarības (dependencies).
 
-```bash
+```
 python -m poetry install 
 ```
 
 Palaist programmu viena spēlētāja režīma.
 
-```bash
+```
 python snakext/app.py 
 ```
 
@@ -53,7 +53,7 @@ Lai palaistu programmu 2 spelētāju režīmā ir jā norāda argumenti: sockets
 lokālā servera ports (neobligāts). Piemēram pieslēgsimies pie socketa
 localhost:54323 ar lokālo serveri portā 54322.
 
-```bash
+```
 python snakext/app.py localhost:54323 --local-port 54322
 ```
 
