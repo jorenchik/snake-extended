@@ -1,94 +1,72 @@
-# Projekta apraksts 
+# Project description
 
-## Projekta nosaukums
+## Project name
 
 Snake multiplayer (snake-extended)
 
-## Grupas dalībnieku saraksts
+## List of group members
 
-Jorens Štekeļs, apl.nr.: js21283
+Joren Štekeļs, registration no.: js21283
 
-## Īss programmas apraksts (ko programma dara)
+## Brief description of the program (what the program does)
 
-Programma ir klasiska čūskas spēle. Ir realizēts gan individuālas spēles, gan
-spēle divatā caur datoru tīklu, kas tika realizēts P2P modeli. Komunikācija ir
-realizēta ar "websockets" bibliotēku un spēles funkcionalitāte ir realizēta ar
-"pygame" bibliotēkas palīdzību.
+The program is a classic snake game. Both individual games and a game for two
+through a computer network, which was implemented in a P2P model. Communication
+is implemented with "websockets" library and game functionality is implemented
+with using the "pygame" library.
 
-Čūskas spēles mērķis ir iegūt pēc iespējas lielāku čūsku, vācot ēdienus, kas
-tiek izvietoti spēles laukā. Spēle beidzas, ja čūska kādas čūskas ķermenim.
+The object of the snake game is to get as big a snake as possible by collecting
+foods that are placed on the field of play. The game ends if the snake touches
+the body of any snake.
 
-## Instrukcijas, kā palaist Jūsu programmu
+## Instructions on how to run your program
 
-Iegūt pirmkoda repozitoriju, piemēram, klonējot to no github repozitorija.
+Get the source code repository, for example by cloning it from the github
+repository.
 
-```
-$ git clone https://github.com/jorenchik/snake-extended 
-$ cd ./snake-extended
-```
+``` $ git clone https://github.com/jorenchik/snake-extended $ cd
+./snake-extended ```
 
-Izveidot virtuālo Python vidi (nav obligāts).
+Create a virtual Python environment (optional).
 
-```
-$ python -m venv venv
-```
+``` $ python -m venv venv ```
 
-Aktivizēt python virtuālo vidi.
+Activate python virtual environment.
 
-Linux/Unix:
-```
-$ source ./venv/bin/activate
-```
+Linux/Unix: ``` $ source ./venv/bin/activate ```
 
-Windows:
-```
-$ source .\venv\Scripts\activate
-```
+Windows: ``` $ source .\venv\Scripts\activate ```
 
-Instalēt ``poetry'', lai iegūt nepieciešamās pakotnes.
-```
-$ python -m pip install poetry 
-$ python -m poetry install 
-```
+Install ``poetry'' to get the necessary packages. ``` $ python -m pip install
+poetry $ python -m poetry install ```
 
-Alternatīvi nepieciešamas pakotnes var iegūt no "requirements.txt".
-```
-$ pip install -r requirements.txt
-```
+Alternatively, required packages can be obtained from "requirements.txt". ``` $
+pip install -r requirements.txt ```
 
-Palaist programmu viena spēlētāja režīmā.
-```
-$ python snakext/app.py 
-```
+Run the program in single player mode. ``` $ python snakext/app.py ```
 
-Lai palaistu programmu 2 spēlētāju režīmā ir jā norāda argumenti: sockets,
-lokālā servera ports (neobligāts). Piemēram pieslēgsimies pie socketa
-localhost:54323 sākot lokālo serveri portā 54322.
-```
-$ python snakext/app.py localhost:54323 --local-port 54322
-```
+To run the program in 2-player mode, the following arguments must be specified:
+sockets, local server port (optional). For example, let's connect to a socket
+localhost:54323 starting the local server on port 54322. ``` $ python
+snakext/app.py localhost:54323 --local-port 54322 ```
 
-Noklusējuma ports ir 54321. Tātad:
-```
-$ python snakext/app.py 192.168.8.3
-```
-Pievienotos pie 192.178.8.3:54321 un startēs serveri portā 54321.
+The default port is 54321. So: ``` $ python snakext/app.py 192.168.8.3 ``` I
+would connect to 192.178.8.3:54321 and start the server on port 54321.
 
-## Ekrānuzņēmumi, kas parāda programmu darbībā
+## Screenshots showing the program in action
 
-Viena spēlētāja režīms
+Single player mode
 
-![Spēle ir sākta](img/singleplayer1.png)
-![Spēle procesā](img/singleplayer2.png)
+![Game Started](docs/img/singleplayer1.png) ![Game in
+progress](docs/img/singleplayer2.png)
 
-Divu spēlētāju režīms. Sākumā notiek pievienošanās. Ja tā ir veiksmīga
-tiek veikts rokasspiediens un sākta spēle līdzīgi kā viena spēlētāja
-režīmā.
+Two player mode. Joining is done at first. If it is successful a handshake is
+performed and the game begins similar to single player mode.
 
-![Divu spēlētāju spēles sākšana](img/multiplayer1.png)
-![Divu spēlētāju spēles process](img/multiplayer2.png)
+![Starting a two-player game](docs/img/multiplayer1.png) ![Two Player Game
+Process](docs/img/multiplayer2.png)
 
-## Saite uz projekta GitHub (Gitlab, u.tml.) repozitoriju
+## Link to the project's GitHub (Gitlab, etc.) repository
 
-Projekta repozitorijs ir atrodams
-[šeit](https://github.com/jorenchik/snake-extended).
+The project repository can be found
+[here](https://github.com/jorenchik/snake-extended).
