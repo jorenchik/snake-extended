@@ -1,4 +1,4 @@
-# Project description
+# Project descriptionREAD
 
 ## Project name
 
@@ -50,8 +50,10 @@ $ python -m pip install poetry
 $ python -m poetry install 
 ```
 
-Alternatively, required packages can be obtained from "requirements.txt". ``` $
-pip install -r requirements.txt ```
+Alternatively, required packages can be obtained from "requirements.txt".
+```
+$ pip install -r requirements.txt
+```
 
 Run the program in single player mode. 
 ```
