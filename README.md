@@ -1,4 +1,4 @@
-# Project descriptionREAD
+# Project description
 
 ## Project name
 
