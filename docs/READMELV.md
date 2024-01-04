@@ -78,15 +78,15 @@ Pievienotos pie 192.178.8.3:54321 un startēs serveri portā 54321.
 
 Viena spēlētāja režīms
 
-![Spēle ir sākta](docs/img/singleplayer1.png)
-![Spēle procesā](docs/img/singleplayer2.png)
+![Spēle ir sākta](img/singleplayer1.png)
+![Spēle procesā](img/singleplayer2.png)
 
 Divu spēlētāju režīms. Sākumā notiek pievienošanās. Ja tā ir veiksmīga
 tiek veikts rokasspiediens un sākta spēle līdzīgi kā viena spēlētāja
 režīmā.
 
-![Divu spēlētāju spēles sākšana](docs/img/multiplayer1.png)
-![Divu spēlētāju spēles process](docs/img/multiplayer2.png)
+![Divu spēlētāju spēles sākšana](img/multiplayer1.png)
+![Divu spēlētāju spēles process](img/multiplayer2.png)
 
 ## Saite uz projekta GitHub (Gitlab, u.tml.) repozitoriju
 
