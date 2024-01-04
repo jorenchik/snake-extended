@@ -152,7 +152,10 @@ async def setup_initial_placement(
     if not state_instance.multiplayer or is_host:
         state_instance.food_placement = logic_controller.place_food(
             state_instance.food_placement,
-            state_instance.local_snake_placement,
+            logic_controller._combine_bodies_on_grid(
+                state_instance.local_snake_placement,
+                state_instance.remote_snake_placement,
+            ),
         )
         if state_instance.multiplayer:
             local_communication_state.food_placement = logic_controller.placement_array(

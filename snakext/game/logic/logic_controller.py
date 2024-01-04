@@ -340,8 +340,10 @@ def handle_snake_movement(
                     local_communication_state, remote_communication_state):
             place_food(
                 state_instance.food_placement,
-                state_instance.local_snake_placement,
-            )
+                _combine_bodies_on_grid(
+                    state_instance.local_snake_placement,
+                    state_instance.remote_snake_placement,
+                ))
         elif not state_instance.multiplayer and state_instance.add_do_snake:
             place_food(
                 state_instance.food_placement,
@@ -403,3 +405,22 @@ def _change_place(place: str,
     number = number if number != -1 else int(place[1])
     new_place = f"{letter}{number}"
     return new_place
+
+
+def _combine_bodies_on_grid(
+    grid_1: state_types.OBJECT_ND_ARRAY,
+    grid_2: state_types.OBJECT_ND_ARRAY,
+) -> state_types.OBJECT_ND_ARRAY:
+    shape = grid_1.shape
+    combined_grid = np.full(shape, state.VOID_PLACE, dtype=np.object_)
+    for i, rows in enumerate(zip(grid_1, grid_2)):
+        row1, row2 = rows
+        for k, cols in enumerate(zip(row1, row2)):
+            col1, col2 = cols
+            is_body = col1[0] in state.SNAKE_PLACES or col2[
+                0] in state.SNAKE_BODY_PLACE
+            combined_grid[
+                i,
+                k,
+            ] = f"{state.SNAKE_BODY_PLACE}0" if is_body else state.VOID_PLACE
+    return combined_grid
