@@ -53,7 +53,10 @@ $ python -m poetry install
 Alternatively, required packages can be obtained from "requirements.txt". ``` $
 pip install -r requirements.txt ```
 
-Run the program in single player mode. ``` $ python snakext/app.py ```
+Run the program in single player mode. 
+```
+$ python snakext/app.py
+```
 
 To run the program in 2-player mode, the following arguments must be specified:
 sockets, local server port (optional). For example, let's connect to a socket
@@ -64,7 +67,9 @@ $ snakext/app.py localhost:54323 --local-port 54322
 ```
 
 The default port is 54321. So:
-``` $ python snakext/app.py 192.168.8.3 ```
+```
+$ python snakext/app.py 192.168.8.3
+```
 I would connect to 192.178.8.3:54321 and start the server on port 54321.
 
 ## Screenshots showing the program in action
