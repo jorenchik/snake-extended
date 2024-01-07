@@ -224,6 +224,7 @@ async def _main_game_loop(
     movement_key = state.RIGHT_DIRECTION
     while True:
         game_clock.tick(pygame_facade)
+        # Check if the game should be ended
         if state_instance.multiplayer and (
                 remote_communication_state.game_state
                 == state.GameStates.STOPPED.value):
@@ -235,13 +236,12 @@ async def _main_game_loop(
             break
         if future.done():
             break
-
         if pygame_facade.is_quit_event():
             local_communication_state.game_state = state.GameStates.STOPPED.value
             pygame_facade.exit()
 
         current_movement_keys = pygame_facade.movement_keys()
-
+        # Syncronize with other player
         if state_instance.multiplayer:
             local_communication_state.snake_placement = logic_controller.placement_array(
                 state_instance.local_snake_placement, )
@@ -255,6 +255,7 @@ async def _main_game_loop(
                 f"{state.SNAKE_BODY_PLACE}0",
             )
 
+        # Host handles food placement for one source of thruth
         if state_instance.multiplayer and not state.is_host(
                 local_communication_state,
                 remote_communication_state,
@@ -273,6 +274,7 @@ async def _main_game_loop(
             movement_key,
         )
 
+        # Stops the game if movement is not performed or snake collides
         if state_instance.game_status == state.GameStates.RUNNING.value:
             if game_clock.is_logic_tick(pygame_facade):
                 moved_successfully = logic_controller.handle_snake_movement(
@@ -293,6 +295,7 @@ async def _main_game_loop(
                 state_instance.game_status = state.GameStates.STOPPED.value
                 local_communication_state.game_state = state_instance.game_status
 
+        # Propagate the event loop in case it is not done yet
         pygame_facade.pump()
 
 

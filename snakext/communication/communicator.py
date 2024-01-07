@@ -228,6 +228,7 @@ async def _respond_to_message_with_transmission_state(
             print(CONNECTION_CLOSED_MESSAGE)
             future.set_result(0)
             break
+        # Determines who is the host
         if not handshake_sent:
             handshake_sent = True
             local_transmission_state.sent_handshake = time.time()

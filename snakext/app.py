@@ -43,6 +43,7 @@ def main() -> None:
             local_transmitted_state_instance,
             remote_transmitted_state_instance,
         )
+        # Server and client runs as a task in main thread
         loop.create_task(start_server)
         loop.create_task(start_client)
         asyncio.get_event_loop().run_until_complete(game_future)

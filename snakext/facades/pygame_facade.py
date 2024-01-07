@@ -80,6 +80,7 @@ def movement_key(previous_keys: list[int],
 def movement_direction(previous_movement_keys: list[int],
                        get_keys: Callable[[], list[int]]) -> int:
     pressed_keys = get_keys()
+    # Detect newly pressed key that would change direction
     if len(previous_movement_keys) > 0:
         new_pressed_keys = [
             x for x in pressed_keys if x not in previous_movement_keys
@@ -134,19 +135,6 @@ def is_quit_event() -> bool:
 def exit() -> None:
     pygame.quit()
     sys.exit()
-
-
-#
-# def _get_keys_pressed() -> list[int]:
-#     global _keys_pressed
-#     global _pygame_module
-#     for event in _pygame_module.event.get():
-#         if event.type == pygame.KEYDOWN:
-#             _keys_pressed.append(event.key)
-#     for event in _pygame_module.event.get():
-#         if event.type == pygame.KEYUP:
-#             _keys_pressed.remove(event.key)
-#     return _keys_pressed
 
 
 def rect(pos_vector_top_left: tuple[float, float],
