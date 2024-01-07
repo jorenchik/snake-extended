@@ -222,6 +222,7 @@ async def _main_game_loop(
         None
     """
     movement_key = state.RIGHT_DIRECTION
+    previous_movement_keys: list[int] = []
     while True:
         game_clock.tick(pygame_facade)
         # Check if the game should be ended
@@ -269,10 +270,11 @@ async def _main_game_loop(
         _draw_game_view(playground_instance, state_instance)
 
         movement_key = pygame_facade.movement_key(
-            current_movement_keys,
+            previous_movement_keys,
             pygame_facade.movement_keys,
             movement_key,
         )
+        previous_movement_keys = current_movement_keys
 
         # Stops the game if movement is not performed or snake collides
         if state_instance.game_status == state.GameStates.RUNNING.value:

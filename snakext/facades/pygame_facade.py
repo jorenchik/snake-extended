@@ -73,22 +73,24 @@ def movement_key(previous_keys: list[int],
     new_movement_key = movement_direction(
         previous_keys,
         get_movement_keys,
+        default_movement_key,
     )
     return new_movement_key if new_movement_key != 0 else default_movement_key
 
 
-def movement_direction(previous_movement_keys: list[int],
-                       get_keys: Callable[[], list[int]]) -> int:
+def movement_direction(
+    previous_movement_keys: list[int],
+    get_keys: Callable[[], list[int]],
+    default_direction: int,
+) -> int:
     pressed_keys = get_keys()
     # Detect newly pressed key that would change direction
-    if len(previous_movement_keys) > 0:
-        new_pressed_keys = [
-            x for x in pressed_keys if x not in previous_movement_keys
-        ]
-        pressed_keys = new_pressed_keys if len(
-            new_pressed_keys) > 0 else pressed_keys
-    first_element = pressed_keys[0] if len(pressed_keys) > 0 else 0
-    direction = KEY_DIRECTION[first_element] if first_element != 0 else 0
+    new_pressed_keys = [
+        x for x in pressed_keys if x not in previous_movement_keys
+    ]
+    first_element = new_pressed_keys[0] if len(new_pressed_keys) > 0 else 0
+    direction = KEY_DIRECTION[
+        first_element] if first_element != 0 else default_direction
     return direction
 
 
