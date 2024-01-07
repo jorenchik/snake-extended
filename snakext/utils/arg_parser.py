@@ -68,11 +68,13 @@ def parse_arguments() -> None:
         return
     args = parser.parse_args()
     REMOTE_SERVER_SOCKET = args.socket
-    LOCAL_SERVER_PORT = args.local_port if args.local_port else DEFAULT_LOCAL_SERVER_PORT
+    LOCAL_SERVER_PORT = args.local_port if args.local_port else "0"
+    if LOCAL_SERVER_PORT != "0" and REMOTE_SERVER_SOCKET == "":
+        raise AttributeError(NO_IP_WITH_LOCAL_PORT_MESSAGE)
+    if LOCAL_SERVER_PORT == "0":
+        LOCAL_SERVER_PORT = DEFAULT_LOCAL_SERVER_PORT
     if not re.match(PORT_REGEX, LOCAL_SERVER_PORT):
         raise AttributeError(INVALID_PORT_MESSAGE)
-    if LOCAL_SERVER_PORT != 0 and REMOTE_SERVER_SOCKET == "":
-        raise AttributeError(NO_IP_WITH_LOCAL_PORT_MESSAGE)
     REMOTE_SERVER_IP, REMOTE_SERVER_PORT = _parse_socket(REMOTE_SERVER_SOCKET)
     MULTIPLAYER = REMOTE_SERVER_IP != ""
     if REMOTE_SERVER_IP not in LOCALHOST_IPS:
