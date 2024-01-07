@@ -14,6 +14,8 @@ from snakext.game.logic import logic_controller
 from snakext.game.state import state
 from snakext.game.views import game_view, playground
 
+CONNECTION_ESTABLISHMENT_WAIT_PERIOD = 0.1
+
 
 async def init_game(
     local_communication_state: state.TransmittedState,
@@ -119,7 +121,7 @@ async def establish_connection(
     """
     if state_instance.multiplayer:
         while True:
-            await asyncio.sleep(0.1)
+            await asyncio.sleep(CONNECTION_ESTABLISHMENT_WAIT_PERIOD)
             if state.is_handshake_done(
                     local_communication_state,
                     remote_communication_state,
