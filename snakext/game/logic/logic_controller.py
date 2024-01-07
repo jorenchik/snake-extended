@@ -75,7 +75,7 @@ def place_food(
         [str, state_types.OBJECT_ND_ARRAY],
         tuple[int, int]] = matrix.choose_random_match,
     where_to_place: str = state.VOID_PLACE,
-) -> state_types.OBJECT_ND_ARRAY:
+) -> bool:
     """
     Places food on the grid in a location not occupied by the snake.
 
@@ -86,11 +86,13 @@ def place_food(
         where_to_place (str): The type of place to search for placement.
 
     Returns:
-        state_types.OBJECT_ND_ARRAY: Updated food placement.
+        bool: whether the food was placed successfully
     """
     i, k = choose_coordinates(where_to_place, food_placement)
-    food_placement[i, k] = state.FOOD_PLACE
-    return food_placement
+    place_found = (i, k) != COORDINATES_NOT_FOUND
+    if place_found:
+        food_placement[i, k] = state.FOOD_PLACE
+    return place_found
 
 
 def placement_array(
@@ -338,17 +340,21 @@ def handle_snake_movement(
                 state_instance.add_do_snake
                 or add_to_remote_snake) and state.is_host(
                     local_communication_state, remote_communication_state):
-            place_food(
+            food_placed = place_food(
                 state_instance.food_placement,
                 _combine_bodies_on_grid(
                     state_instance.local_snake_placement,
                     state_instance.remote_snake_placement,
                 ))
+            if not food_placed:
+                return False
         elif not state_instance.multiplayer and state_instance.add_do_snake:
-            place_food(
+            food_placed = place_food(
                 state_instance.food_placement,
                 state_instance.local_snake_placement,
             )
+            if not food_placed:
+                return False
     return True
 
 
