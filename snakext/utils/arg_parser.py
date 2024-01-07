@@ -9,7 +9,7 @@ initializes multiplayer configurations based on the provided arguments.
 import argparse
 import re
 
-NO_IP_WITH_LOCAL_PORT_MESSAGE = "Cannot use custom ports without specified ip address"
+NO_IP_WITH_LOCAL_PORT_MESSAGE = "Cannot use custom ports without specified ip address or socket."
 INVALID_IP_MESSAGE = "Provided socket is invalid"
 INVALID_PORT_MESSAGE = "Provided port is invalid"
 
@@ -29,19 +29,24 @@ REMOTE_SERVER_PORT = None
 LOCALHOST_IPS = ("127.0.0.1", "localhost")
 REMOTE_LISTEN_IP = "0.0.0.0"
 
-parser = argparse.ArgumentParser(description="Configuration CLI")
+parser = argparse.ArgumentParser(
+    description="""Snake game with both singleplayer and multiplayer. You need 
+    to get as big a snake as possible while not hitting yourself or other 
+    snake. Change direction with UDLR or KJHL.""")
 parser.add_argument(
     'socket',
     type=str,
     nargs="?",
     default="",
-    help='Sockets (<ip>:<port>) address to connect to for multiplayer',
+    help="""Sockets or IP address to connect to for multiplayer.
+    Usage: <ip>:<socket> or <ip> for default port.""",
 )
 parser.add_argument(
     '--local-port',
     type=str,
     default=0,
-    help='Custom port for local server (default:54321)',
+    help="""Custom port for local server if socket is provided for multiplayer.
+    Defaults to 54321.""",
 )
 
 args: argparse.Namespace | None = None
