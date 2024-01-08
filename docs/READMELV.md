@@ -18,6 +18,11 @@ realizēta ar "websockets" bibliotēku un spēles funkcionalitāte ir realizēta
 Čūskas spēles mērķis ir iegūt pēc iespējas lielāku čūsku, vācot ēdienus, kas
 tiek izvietoti spēles laukā. Spēle beidzas, ja čūska kādas čūskas ķermenim.
 
+## Priekšnoteikumi
+Lai spēlētu ar attālo IP un jums nav personīgās publiskās IP adreses, ir
+jāiestata NAT porta pāradresācija portam, kuru izmantosit vietējam serverim.
+Tam vajadzētu būt nekā attālajā pusē.
+
 ## Instrukcijas, kā palaist Jūsu programmu
 
 Iegūt pirmkoda repozitoriju, piemēram, klonējot to no github repozitorija.

@@ -19,6 +19,11 @@ The object of the snake game is to get as big a snake as possible by collecting
 foods that are placed on the field of play. The game ends if the snake touches
 the body of any snake.
 
+## Prerequisites 
+In order to play with a remote ip and you do not have a personal public IP
+address you need to set up NAT port forwarding for the port you are going to
+use for local server. The should be than on the remote side.
+
 ## Instructions on how to run your program
 Get the source code repository, for example by cloning it from the github
 repository.
